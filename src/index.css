@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './fonts.css';
+
+html,
+body,
+#root {
+  font-family: 'Pretendard', sans-serif;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
