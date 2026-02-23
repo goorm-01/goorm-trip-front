@@ -9,13 +9,15 @@ export default function Product() {
   return (
     <div className='flex justify-end'>
       <div
-        className='flex flex-col w-[60%] shadow-2xl min-h-screen'
+        className='flex flex-col w-[55%] shadow-2xl min-h-screen'
         style={{ backgroundColor: COLORS.BG_PRIMARY }} // 사용 예시입니다!
       >
         <ProductHeader />
-        <ProductInfo />
-        <ProductDescription />
-        <ProductMap />
+        <div className='px-10'>
+          <ProductInfo />
+          <ProductDescription />
+          <ProductMap />
+        </div>
       </div>
     </div>
   );
