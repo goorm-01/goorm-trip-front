@@ -1,10 +1,28 @@
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { COLORS } from './styles/Colors';
 import Main from './pages/Main.jsx';
+import Product from './pages/Product/Product.js';
 
 export default function App() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API}&autoload=false`;
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
   return (
-    <Routes>
-      <Route path='/' element={<Main />} />
-    </Routes>
+    <div
+      style={{
+        backgroundColor: COLORS.BG_PRIMARY,
+        color: COLORS.TEXT_PRIMARY,
+      }}
+    >
+      <Routes>
+        <Route path='/' element={<Main />} />
+        <Route path='/product' element={<Product />} />
+      </Routes>
+    </div>
   );
 }
