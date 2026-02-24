@@ -15,9 +15,11 @@ export default function FilterTabs({ selected, onSelect }: FilterTabsProps) {
                     key={cat}
                     onClick={() => onSelect(cat)}
                     className={`px-4 py-2 rounded-full border text-sm whitespace-nowrap transition-colors cursor-pointer ${selected === cat
-                            ? 'text-blue-500 border-blue-500 bg-blue-50'
-                            : 'text-gray-600 border-gray-300 hover:bg-gray-50'}`
-                    }>
+                        ? 'border-[var(--category-selected-text)] bg-[var(--category-selected-bg)] text-[var(--category-selected-text)]'
+                        : 'border-gray-300 hover:bg-[var(--category-bg)] text-[var(--category-text)]'
+                        }`
+                    }
+                >
                     {cat}
                 </button>
             ))}

@@ -1,9 +1,14 @@
+import { COLORS } from "../../styles/Colors";
+import { useState } from "react";
+
 interface SearchBarProps {
     value: string;
     onSearch: (value: string) => void;
 }
 
 export default function SearchBar({ value, onSearch }: SearchBarProps) {
+    const [focused, setFocused] = useState(false);
+
     return (
         <div className="relative w-full">
             <svg
@@ -25,7 +30,10 @@ export default function SearchBar({ value, onSearch }: SearchBarProps) {
                 placeholder="여행 상품을 검색하세요"
                 value={value}
                 onChange={(e) => onSearch(e.target.value)}
-                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 pl-10 border rounded-lg focus:outline-none"
+                style={{ backgroundColor: COLORS.SEARCH_BG, borderColor: focused ? COLORS.BUTTON_MAIN : COLORS.INPUT_BOX, color: COLORS.PLACEHOLDER }}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
             />
         </div>
     )
