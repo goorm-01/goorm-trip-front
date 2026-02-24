@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { COLORS } from './styles/Colors';
-import Main from './pages/Main.jsx';
-import Product from './pages/Product/Product.js';
+import Main from './pages/Main';
+import Product from './pages/Product/Product';
+import Payment from './pages/Payment/Payment';
 
 export default function App() {
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function App() {
       <Routes>
         <Route path='/' element={<Main />} />
         <Route path='/product' element={<Product />} />
+        <Route path='/payment' element={<Payment />} />
       </Routes>
     </div>
   );
