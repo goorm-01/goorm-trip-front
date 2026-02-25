@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import ProductList from './ProductList';
-import type { Product } from '../../types/product';
+import type { Product } from '../../../../types/product';
 
 const SAMPLE_PRODUCTS: Product[] = [
     { product_id: 1, product_name: '제주도 3박 4일 여행', category: '자연관광', price: 890000, image: 'https://placehold.co/400x300?text=제주3박4일' },

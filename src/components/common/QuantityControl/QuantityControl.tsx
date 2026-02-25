@@ -1,4 +1,4 @@
-import { COLORS } from "../../styles/Colors";
+import { COLORS } from "../../../styles/Colors";
 
 interface QuantityControlProps {
     quantity: number;

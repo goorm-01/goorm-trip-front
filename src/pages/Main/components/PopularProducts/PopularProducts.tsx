@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Product } from '../../types/product';
+import type { Product } from '../../../../types/product';
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 interface PopularProductsProps {

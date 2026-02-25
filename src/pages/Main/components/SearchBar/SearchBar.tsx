@@ -1,4 +1,4 @@
-import { COLORS } from "../../styles/Colors";
+import { COLORS } from "../../../../styles/Colors";
 import { useState } from "react";
 
 interface SearchBarProps {

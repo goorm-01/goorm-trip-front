@@ -38,3 +38,8 @@ test('수량이 1일 때 - 버튼이 비활성화된다', () => {
     render(<QuantityControl quantity={1} onChange={() => { }} />);
     expect(screen.getByRole('button', { name: '수량 감소' })).toBeDisabled();
 });
+
+test('min prop이 설정되면 해당 값에서 - 버튼이 비활성화된다', () => {
+    render(<QuantityControl quantity={1} onChange={() => { }} min={1} />);
+    expect(screen.getByRole('button', { name: '수량 감소' })).toBeDisabled();
+});

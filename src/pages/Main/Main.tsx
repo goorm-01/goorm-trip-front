@@ -1,13 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
-import SearchBar from '../components/searchbar/SearchBar';
-import FilterTabs from '../components/filtertabs/FilterTabs';
-import type { FilterCategory } from '../components/filtertabs/FilterTabs';
-import ProductList from '../components/productlist/ProductList';
-import PopularProducts from '../components/popularproducts/PopularProducts';
-import { COLORS } from '../styles/Colors';
+import SearchBar from './components/SearchBar/SearchBar';
+import FilterTabs from './components/FilterTabs/FilterTabs';
+import type { FilterCategory } from './components/FilterTabs/FilterTabs';
+import ProductList from './components/ProductList/ProductList';
+import PopularProducts from './components/PopularProducts/PopularProducts';
+import { COLORS } from '../../styles/Colors';
 
-import { MOCK_PRODUCTS } from '../api/mockData';
+import { MOCK_PRODUCTS } from '../../api/mockData';
 
 export default function Main() {
   const [search, setSearch] = useState('');

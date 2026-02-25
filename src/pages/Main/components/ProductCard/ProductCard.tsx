@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import type { Product } from '../../types/product';
-import QuantityControl from '../quantitycontrol/QuantityControl';
-import { COLORS } from '../../styles/Colors';
+import type { Product } from '../../../../types/product';
+import QuantityControl from '../../../../components/common/QuantityControl/QuantityControl';
+import { COLORS } from '../../../../styles/Colors';
 import { AiOutlineShopping } from "react-icons/ai";
 
 interface ProductCardProps {

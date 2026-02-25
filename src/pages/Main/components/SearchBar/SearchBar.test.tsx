@@ -17,3 +17,8 @@ test('검색어 입력 시 onSearch 호출', async () => {
     await user.type(screen.getByPlaceholderText('여행 상품을 검색하세요'), '제주');
     expect(handleSearch).toHaveBeenCalled();
 });
+
+test('value prop이 입력창에 표시된다', () => {
+    render(<SearchBar value="제주" onSearch={() => { }} />);
+    expect(screen.getByDisplayValue('제주')).toBeInTheDocument();
+});

@@ -1,6 +1,6 @@
-import ProductCard from '../productcard/ProductCard';
-import type { Product } from '../../types/product';
-import type { FilterCategory } from '../filtertabs/FilterTabs';
+import ProductCard from '../ProductCard/ProductCard';
+import type { Product } from '../../../../types/product';
+import type { FilterCategory } from '../FilterTabs/FilterTabs';
 
 interface ProductListProps {
     products: Product[];

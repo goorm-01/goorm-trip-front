@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PopularProducts from './PopularProducts';
-import type { Product } from '../../types/product';
+import type { Product } from '../../../../types/product';
 
 const SAMPLE_PRODUCTS: Product[] = [
     {
@@ -66,4 +66,14 @@ test('첫 번째 슬라이드에서 이전 클릭 시 마지막으로 돌아간�
 test('현재 슬라이드 인디케이터가 표시된다', () => {
     render(<PopularProducts products={SAMPLE_PRODUCTS} />);
     expect(screen.getByText('1 / 3')).toBeInTheDocument();
+});
+
+test('count prop으로 표시 개수가 제한된다', async () => {
+    const user = userEvent.setup();
+    render(<PopularProducts products={SAMPLE_PRODUCTS} count={2} />);
+
+    expect(screen.getByText('1 / 2')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '다음 슬라이드' }));
+    await user.click(screen.getByRole('button', { name: '다음 슬라이드' }));
+    expect(screen.getByText('1 / 2')).toBeInTheDocument(); // 2개만 순환
 });

@@ -22,6 +22,6 @@ test('탭 클릭 시 onSelect가 호출된다', async () => {
 
 test('선택된 탭에 활성 스타일이 적용된다', () => {
     render(<FilterTabs selected="자연관광" onSelect={() => { }} />);
-    expect(screen.getByText('자연관광').className).toContain('text-blue-500');
-    expect(screen.getByText('전체').className).not.toContain('text-blue-500');
+    expect(screen.getByText('자연관광').className).toContain('text-[var(--category-selected-text)]');
+    expect(screen.getByText('전체').className).not.toContain('text-[var(--category-selected-text)]');
 });

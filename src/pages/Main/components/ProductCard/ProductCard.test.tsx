@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ProductCard from './ProductCard';
-import type { Product } from '../../types/product';
+import type { Product } from '../../../../types/product';
 
 const SAMPLE_PRODUCT: Product = {
     product_id: 1,
@@ -59,4 +59,24 @@ test('예약하기 버튼 클릭 시 onReserve가 호출된다', async () => {
 
     await user.click(screen.getByRole('button', { name: '예약하기' }));
     expect(handleReserve).toHaveBeenCalledWith(SAMPLE_PRODUCT, 1);
+});
+
+test('수량 변경 후 장바구니 담기 클릭 시 변경된 수량으로 호출된다', async () => {
+    const handleAddToCart = vi.fn();
+    const user = userEvent.setup();
+    render(<ProductCard product={SAMPLE_PRODUCT} onAddToCart={handleAddToCart} onReserve={() => { }} />);
+
+    await user.click(screen.getByRole('button', { name: '수량 증가' }));
+    await user.click(screen.getByRole('button', { name: '장바구니에 추가' }));
+    expect(handleAddToCart).toHaveBeenCalledWith(SAMPLE_PRODUCT, 2);
+});
+
+test('수량 변경 후 예약하기 클릭 시 변경된 수량으로 호출된다', async () => {
+    const handleReserve = vi.fn();
+    const user = userEvent.setup();
+    render(<ProductCard product={SAMPLE_PRODUCT} onAddToCart={() => { }} onReserve={handleReserve} />);
+
+    await user.click(screen.getByRole('button', { name: '수량 증가' }));
+    await user.click(screen.getByRole('button', { name: '예약하기' }));
+    expect(handleReserve).toHaveBeenCalledWith(SAMPLE_PRODUCT, 2);
 });
