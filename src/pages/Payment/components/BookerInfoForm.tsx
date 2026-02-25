@@ -47,6 +47,9 @@ export default function BookerInfoForm({
             name='phone'
             value={formData.phone}
             onChange={onInputChange}
+            inputMode='numeric'
+            pattern='[0-9]*'
+            autoComplete='tel-national'
             placeholder='전화번호를 입력해주세요.'
             className='w-full text-base'
           />
@@ -58,6 +61,7 @@ export default function BookerInfoForm({
         <input
           id='email'
           name='email'
+          type='email'
           value={formData.email}
           onChange={onInputChange}
           placeholder='groom@example.com'

@@ -33,7 +33,7 @@ export default function Payment() {
     lastName: '',
     firstName: '',
     phone: '',
-    email: 'groom@example.com',
+    email: '',
   });
   const [termsAccepted, setTermsAccepted] = useState<TermsAccepted>({
     cancellation: false,
@@ -44,7 +44,8 @@ export default function Payment() {
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const nextValue = name === 'phone' ? value.replace(/\D/g, '') : value;
+    setFormData((prev) => ({ ...prev, [name]: nextValue }));
   };
 
   const handleTermsChange = (term: BookingTerm) => {
@@ -111,6 +112,9 @@ export default function Payment() {
     }
     if (!formData.lastName || !formData.firstName || !formData.phone) {
       return '예약자 정보를 모두 입력해주세요.';
+    }
+    if (!isValidEmail(formData.email)) {
+      return '유효한 이메일 형식으로 입력해주세요. (예: user@example.com)';
     }
     if (!termsAccepted.cancellation || !termsAccepted.refund) {
       return '필수 약관에 동의해주세요.';
@@ -252,4 +256,8 @@ function extractOrderId(data: unknown): string | null {
   }
 
   return null;
+}
+
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 }
