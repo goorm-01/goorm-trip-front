@@ -1,17 +1,11 @@
-import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { COLORS } from './styles/Colors';
 import Main from './pages/Main/Main';
 import Product from './pages/Product/Product.js';
-import TestApi from './pages/TestApi'; // 추가
+import useKakaoLoader from './hooks/useKakaoLoader';
 
 export default function App() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API}&autoload=false`;
-    script.async = true;
-    document.head.appendChild(script);
-  }, []);
+  useKakaoLoader();
 
   return (
     <div
@@ -23,7 +17,6 @@ export default function App() {
       <Routes>
         <Route path='/' element={<Main />} />
         <Route path='/product/:productId' element={<Product />} />
-        <Route path='/test' element={<TestApi />} /> {/* 추가 */}
       </Routes>
     </div>
   );

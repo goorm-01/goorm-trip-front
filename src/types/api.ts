@@ -16,6 +16,7 @@ export interface Product {
 }
 
 export interface ProductDetail {
+  product_id: number;
   product_name: string;
   price: number;
   images: string[];
