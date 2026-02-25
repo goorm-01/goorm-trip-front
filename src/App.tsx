@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { COLORS } from './styles/Colors';
-import Main from './pages/Main.jsx';
+import Main from './pages/Main/Main';
 import Product from './pages/Product/Product.js';
 import TestApi from './pages/TestApi'; // 추가
 
