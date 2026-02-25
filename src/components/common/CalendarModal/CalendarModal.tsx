@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { COLORS } from '../../../styles/Colors';
 
-interface DateModalProps {
+interface CalendarModalProps {
     isOpen: boolean;
     onConfirm: (date: string) => void;
     onClose: () => void;
 }
 
-export default function CalendarModal({ isOpen, onConfirm, onClose }: DateModalProps) {
+export default function CalendarModal({ isOpen, onConfirm, onClose }: CalendarModalProps) {
     const [date, setDate] = useState('');
     const [error, setError] = useState('');
     const today = new Date().toISOString().split('T')[0];
