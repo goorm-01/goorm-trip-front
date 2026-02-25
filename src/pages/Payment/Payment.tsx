@@ -1,6 +1,8 @@
 import { useMemo, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useCreateOrderPreview } from '../../hooks/api/useOrderApi';
+import { useProcessPayment } from '../../hooks/api/usePaymentApi';
 import { bookingItems } from './constants';
 import BookerInfoForm from './components/BookerInfoForm';
 import BookingItemsSection from './components/BookingItemsSection';
@@ -11,6 +13,9 @@ import type { BookingTerm, PaymentFormData, TermsAccepted } from './types';
 
 export default function Payment() {
   const navigate = useNavigate();
+  const createOrderPreview = useCreateOrderPreview();
+  const processPayment = useProcessPayment();
+
   const [selectedItems, setSelectedItems] = useState<Record<number, boolean>>(
     () =>
       bookingItems.reduce<Record<number, boolean>>((acc, item) => {
@@ -35,6 +40,7 @@ export default function Payment() {
     refund: false,
     all: false,
   });
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -98,6 +104,65 @@ export default function Payment() {
     [quantities, selectedItems],
   );
 
+  const validateBeforeSubmit = () => {
+    const hasSelectedItems = Object.values(selectedItems).some(Boolean);
+    if (!hasSelectedItems) {
+      return '최소 1개 이상의 상품을 선택해주세요.';
+    }
+    if (!formData.lastName || !formData.firstName || !formData.phone) {
+      return '예약자 정보를 모두 입력해주세요.';
+    }
+    if (!termsAccepted.cancellation || !termsAccepted.refund) {
+      return '필수 약관에 동의해주세요.';
+    }
+    return null;
+  };
+
+  const handleSubmitPayment = async () => {
+    setSubmitError(null);
+
+    const validationError = validateBeforeSubmit();
+    if (validationError) {
+      setSubmitError(validationError);
+      return;
+    }
+
+    try {
+      const selectedBookingItems = bookingItems.filter(
+        (item) => selectedItems[item.id],
+      );
+
+      const previewResponse = await createOrderPreview.mutateAsync({
+        products: selectedBookingItems.map((item) => ({
+          product_id: item.id,
+          quantity: quantities[item.id] ?? item.quantity,
+          departure_date: normalizeDate(item.date),
+        })),
+      });
+
+      const orderId = extractOrderId(previewResponse);
+
+      if (!orderId) {
+        setSubmitError(
+          '주문 정보 생성에 실패했습니다. 응답 형식을 확인해주세요.',
+        );
+        return;
+      }
+
+      await processPayment.mutateAsync({
+        order_id: orderId,
+        total_amount: selectedTotal,
+        payment_method: 'CARD',
+      });
+    } catch {
+      setSubmitError(
+        '결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      );
+    }
+  };
+
+  const isSubmitting = createOrderPreview.isPending || processPayment.isPending;
+
   return (
     <div className='min-h-screen w-full bg-white text-[#191919]'>
       <div className='mx-auto flex w-full max-w-[1512px] flex-col items-center'>
@@ -134,6 +199,9 @@ export default function Payment() {
             <PaymentSummary
               items={selectedPaymentItems}
               total={`${selectedTotal.toLocaleString('ko-KR')} 원`}
+              isSubmitting={isSubmitting}
+              submitError={submitError}
+              onSubmit={handleSubmitPayment}
             />
           </section>
 
@@ -150,4 +218,38 @@ export default function Payment() {
 
 function parsePrice(value: string) {
   return Number(value.replace(/[^\d]/g, ''));
+}
+
+function normalizeDate(dateRange: string) {
+  const startDate = dateRange.split('~')[0]?.trim() ?? '';
+  const [yy, mm, dd] = startDate.split('.');
+  if (!yy || !mm || !dd) {
+    return new Date().toISOString().slice(0, 10);
+  }
+  return `20${yy}-${mm}-${dd}`;
+}
+
+function extractOrderId(data: unknown): string | null {
+  if (typeof data !== 'object' || data === null) {
+    return null;
+  }
+
+  const source = data as Record<string, unknown>;
+  const candidates = [
+    source.order_id,
+    source.orderId,
+    (source.data as Record<string, unknown> | undefined)?.order_id,
+    (source.data as Record<string, unknown> | undefined)?.orderId,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.length > 0) {
+      return candidate;
+    }
+    if (typeof candidate === 'number') {
+      return String(candidate);
+    }
+  }
+
+  return null;
 }

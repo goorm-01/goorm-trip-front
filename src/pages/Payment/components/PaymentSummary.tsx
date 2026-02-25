@@ -3,9 +3,18 @@ import type { PaymentItem } from '../types';
 interface PaymentSummaryProps {
   items: PaymentItem[];
   total: string;
+  isSubmitting: boolean;
+  submitError: string | null;
+  onSubmit: () => void;
 }
 
-export default function PaymentSummary({ items, total }: PaymentSummaryProps) {
+export default function PaymentSummary({
+  items,
+  total,
+  isSubmitting,
+  submitError,
+  onSubmit,
+}: PaymentSummaryProps) {
   return (
     <aside className='rounded-xl border border-neutral-200 p-5'>
       <h3 className='mb-4 text-xl font-semibold'>결제 정보</h3>
@@ -27,10 +36,15 @@ export default function PaymentSummary({ items, total }: PaymentSummaryProps) {
 
       <button
         type='button'
+        onClick={onSubmit}
+        disabled={isSubmitting}
         className='mt-6 h-12 w-full rounded-[10px] bg-[#2a72e5] text-base font-medium text-white'
       >
-        결제하기
+        {isSubmitting ? '결제 처리중...' : '결제하기'}
       </button>
+      {submitError ? (
+        <p className='mt-3 text-sm text-[#ff5757]'>{submitError}</p>
+      ) : null}
     </aside>
   );
 }
