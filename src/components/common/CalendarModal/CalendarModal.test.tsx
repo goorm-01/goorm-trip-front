@@ -73,7 +73,26 @@ test('모달 내부 클릭 시 onClose가 호출되지 않는다', async () => {
     expect(handleClose).not.toHaveBeenCalled();
 });
 
-test('오늘 이전 날짜를 선택할 수 없다', () => {
+test('과거 날짜를 선택할 수 없다', () => {
     render(<CalendarModal {...DateProps} />);
     expect(screen.getByLabelText('출발일')).toHaveAttribute('min', TODAY);
+});
+
+test('과거 날짜를 입력하면 확인 버튼이 비활성화 상태가 된다', () => {
+    render(<CalendarModal {...DateProps} />);
+    fireEvent.change(screen.getByLabelText('출발일'), { target: { value: '2020-01-01' } });
+    expect(screen.getByRole('button', { name: '확인' })).toBeDisabled();
+});
+
+test('과거 날짜를 입력하면 에러 메시지가 표시된다', () => {
+    render(<CalendarModal {...DateProps} />);
+    fireEvent.change(screen.getByLabelText('출발일'), { target: { value: '2020-01-01' } });
+    expect(screen.getByText('해당 일자는 선택이 불가능합니다.')).toBeInTheDocument();
+});
+
+test('유효한 날짜를 입력하면 에러 메시지가 표시되지 않는다', () => {
+    render(<CalendarModal {...DateProps} />);
+    fireEvent.change(screen.getByLabelText('출발일'), { target: { value: '2020-01-01' } });
+    fireEvent.change(screen.getByLabelText('출발일'), { target: { value: '2026-12-01' } });
+    expect(screen.queryByText('해당 일자는 선택이 불가능합니다.')).not.toBeInTheDocument();
 });

@@ -9,6 +9,7 @@ interface DateModalProps {
 
 export default function CalendarModal({ isOpen, onConfirm, onClose }: DateModalProps) {
     const [date, setDate] = useState('');
+    const [error, setError] = useState('');
     const today = new Date().toISOString().split('T')[0];
 
     const handleConfirm = () => {
@@ -19,6 +20,16 @@ export default function CalendarModal({ isOpen, onConfirm, onClose }: DateModalP
     const handleClose = () => {
         setDate('');
         onClose();
+    };
+
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setDate(value);
+        if (value && value < today) {
+            setError('해당 일자는 선택이 불가능합니다.');
+        } else {
+            setError('');
+        }
     };
 
     if (!isOpen) return null;
@@ -41,7 +52,7 @@ export default function CalendarModal({ isOpen, onConfirm, onClose }: DateModalP
                     aria-label="출발일"
                     value={date}
                     min={today}
-                    onChange={(e) => setDate(e.target.value)}
+                    onChange={handleDateChange}
                     className="w-full rounded-lg px-3 py-2 mb-6 border"
                     style={{
                         backgroundColor: COLORS.DESCRIPTION_BG,
@@ -49,6 +60,11 @@ export default function CalendarModal({ isOpen, onConfirm, onClose }: DateModalP
                         color: COLORS.TEXT_PRIMARY,
                     }}
                 />
+                {error && (
+                    <p style={{ color: COLORS.REQUIRED }} className="text-xs mt-1 mb-4">
+                        {error}
+                    </p>
+                )}
                 <div className="flex gap-3">
                     <button
                         type="button"
@@ -64,7 +80,7 @@ export default function CalendarModal({ isOpen, onConfirm, onClose }: DateModalP
                     <button
                         type="button"
                         onClick={handleConfirm}
-                        disabled={!date}
+                        disabled={!date || date < today}
                         className="flex-1 py-2 rounded-lg text-sm text-white disabled:opacity-40 disabled:cursor-not-allowed"
                         style={{ backgroundColor: COLORS.BUTTON_MAIN }}
                     >
