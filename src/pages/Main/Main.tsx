@@ -32,7 +32,12 @@ export default function Main() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <PopularProducts products={MOCK_PRODUCTS} count={5} />
+        <PopularProducts
+          products={MOCK_PRODUCTS}
+          count={5}
+          onAddToCart={(product, quantity) => console.log('장바구니에 담기:', product, quantity)}
+          onReserve={(product, quantity) => console.log('예약하기:', product, quantity)}
+        />
         <ProductList
           products={MOCK_PRODUCTS}
           category={category}
