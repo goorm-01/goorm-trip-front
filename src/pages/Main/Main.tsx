@@ -8,10 +8,32 @@ import PopularProducts from './components/PopularProducts/PopularProducts';
 import { COLORS } from '../../styles/Colors';
 
 import { MOCK_PRODUCTS } from '../../api/mockData';
+import type { Product } from '../../types/product';
+import CalendarModal from '../../components/common/CalendarModal/CalendarModal';
 
 export default function Main() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<FilterCategory>('전체');
+  const [dateModalOpen, setDateModalOpen] = useState(false);
+  const [pendingItem, setPendingItem] = useState<{
+    product: Product;
+    quantity: number;
+    type: 'cart' | 'reserve';
+  } | null>(null);
+
+  const handleDateConfirm = (date: string) => {
+    if (!pendingItem) return;
+
+    console.log({
+      product_id: pendingItem.product.product_id,
+      quantity: pendingItem.quantity,
+      departure_date: date,
+      type: pendingItem.type,
+    });
+
+    setDateModalOpen(false);
+    setPendingItem(null);
+  };
 
   return (
     <div
@@ -54,6 +76,14 @@ export default function Main() {
           }
         />
       </main>
+      <CalendarModal
+        isOpen={dateModalOpen}
+        onConfirm={handleDateConfirm}
+        onClose={() => {
+          setDateModalOpen(false);
+          setPendingItem(null);
+        }}
+      />
     </div>
   );
 }
