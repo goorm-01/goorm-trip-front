@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Product } from '../../../../types/product';
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { AiOutlineShopping } from "react-icons/ai";
