@@ -37,23 +37,26 @@ export default function Main() {
 
   return (
     <div
-      className="min-h-screen"
+      className='min-h-screen'
       style={{ backgroundColor: COLORS.BG_PRIMARY }}
     >
       <header
-        className="shadow-sm"
+        className='shadow-sm'
         style={{ backgroundColor: COLORS.BG_PRIMARY }}
       >
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold mb-4">goorm-trip</h1>
+        <div className='px-4 py-6 mx-auto max-w-7xl'>
+          <div className='flex gap-2'>
+            <div className='text-3xl'>☁️</div>
+            <h1 className='mb-4 text-2xl font-bold'>GoormTrip</h1>
+          </div>
           <SearchBar value={search} onSearch={setSearch} />
-          <div className="mt-4">
+          <div className='mt-4'>
             <FilterTabs selected={category} onSelect={setCategory} />
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className='px-4 py-8 mx-auto max-w-7xl'>
         <PopularProducts
           products={MOCK_PRODUCTS}
           count={5}
