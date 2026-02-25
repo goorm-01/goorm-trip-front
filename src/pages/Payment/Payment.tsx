@@ -3,13 +3,17 @@ import { useNavigate } from 'react-router-dom';
 
 import { useCreateOrderPreview } from '../../hooks/api/useOrderApi';
 import { useProcessPayment } from '../../hooks/api/usePaymentApi';
-import { bookingItems } from './constants';
+import { MOCK_BOOKING_ITEMS } from './mockData.payment';
 import BookerInfoForm from './components/BookerInfoForm';
 import BookingItemsSection from './components/BookingItemsSection';
 import PaymentHeader from './components/PaymentHeader';
 import PaymentSummary from './components/PaymentSummary';
 import TermsAgreement from './components/TermsAgreement';
-import type { BookingTerm, PaymentFormData, TermsAccepted } from './types';
+import type {
+  BookingTerm,
+  PaymentFormData,
+  TermsAccepted,
+} from '../../types/payment';
 
 export default function Payment() {
   const navigate = useNavigate();
@@ -18,13 +22,13 @@ export default function Payment() {
 
   const [selectedItems, setSelectedItems] = useState<Record<number, boolean>>(
     () =>
-      bookingItems.reduce<Record<number, boolean>>((acc, item) => {
+      MOCK_BOOKING_ITEMS.reduce<Record<number, boolean>>((acc, item) => {
         acc[item.id] = true;
         return acc;
       }, {}),
   );
   const [quantities, setQuantities] = useState<Record<number, number>>(() =>
-    bookingItems.reduce<Record<number, number>>((acc, item) => {
+    MOCK_BOOKING_ITEMS.reduce<Record<number, number>>((acc, item) => {
       acc[item.id] = item.quantity;
       return acc;
     }, {}),
@@ -78,9 +82,8 @@ export default function Payment() {
 
   const selectedPaymentItems = useMemo(
     () =>
-      bookingItems
-        .filter((item) => selectedItems[item.id])
-        .map((item) => {
+      MOCK_BOOKING_ITEMS.filter((item) => selectedItems[item.id]).map(
+        (item) => {
           const quantity = quantities[item.id] ?? item.quantity;
           const totalPrice = parsePrice(item.price) * quantity;
           return {
@@ -89,13 +92,14 @@ export default function Payment() {
             quantity,
             price: `${totalPrice.toLocaleString('ko-KR')} 원`,
           };
-        }),
+        },
+      ),
     [quantities, selectedItems],
   );
 
   const selectedTotal = useMemo(
     () =>
-      bookingItems.reduce((acc, item) => {
+      MOCK_BOOKING_ITEMS.reduce((acc, item) => {
         if (!selectedItems[item.id]) {
           return acc;
         }
@@ -132,7 +136,7 @@ export default function Payment() {
     }
 
     try {
-      const selectedBookingItems = bookingItems.filter(
+      const selectedBookingItems = MOCK_BOOKING_ITEMS.filter(
         (item) => selectedItems[item.id],
       );
 
@@ -179,7 +183,7 @@ export default function Payment() {
 
         <div className='flex w-full flex-col gap-10 overflow-y-auto px-6 py-8 md:px-[150px]'>
           <BookingItemsSection
-            items={bookingItems}
+            items={MOCK_BOOKING_ITEMS}
             selectedItems={selectedItems}
             quantities={quantities}
             onToggleItem={handleItemCheckChange}
@@ -227,10 +231,23 @@ function parsePrice(value: string) {
 function normalizeDate(dateRange: string) {
   const startDate = dateRange.split('~')[0]?.trim() ?? '';
   const [yy, mm, dd] = startDate.split('.');
+  const fallbackDate = getTomorrowDate();
   if (!yy || !mm || !dd) {
-    return new Date().toISOString().slice(0, 10);
+    return fallbackDate;
   }
-  return `20${yy}-${mm}-${dd}`;
+
+  const parsedDate = `20${yy}-${mm}-${dd}`;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const candidate = new Date(parsedDate);
+  candidate.setHours(0, 0, 0, 0);
+
+  if (Number.isNaN(candidate.getTime()) || candidate < today) {
+    return fallbackDate;
+  }
+
+  return parsedDate;
 }
 
 function extractOrderId(data: unknown): string | null {
@@ -260,4 +277,10 @@ function extractOrderId(data: unknown): string | null {
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
+function getTomorrowDate() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toISOString().slice(0, 10);
 }

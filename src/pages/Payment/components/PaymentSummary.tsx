@@ -1,4 +1,4 @@
-import type { PaymentItem } from '../types';
+import type { PaymentItem } from '../../../types/payment';
 
 interface PaymentSummaryProps {
   items: PaymentItem[];

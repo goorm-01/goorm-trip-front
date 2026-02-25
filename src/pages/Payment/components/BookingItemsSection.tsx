@@ -1,4 +1,4 @@
-import type { BookingItem } from '../types';
+import type { BookingItem } from '../../../types/payment';
 
 interface BookingItemsSectionProps {
   items: BookingItem[];

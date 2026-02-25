@@ -1,4 +1,4 @@
-import type { TermsAccepted, TermsChangeHandler } from '../types';
+import type { TermsAccepted, TermsChangeHandler } from '../../../types/payment';
 
 interface TermsAgreementProps {
   termsAccepted: TermsAccepted;

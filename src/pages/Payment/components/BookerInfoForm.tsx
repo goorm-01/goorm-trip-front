@@ -1,4 +1,7 @@
-import type { PaymentFormData, PaymentInputChange } from '../types';
+import type {
+  PaymentFormData,
+  PaymentInputChange,
+} from '../../../types/payment';
 
 interface BookerInfoFormProps {
   formData: PaymentFormData;
