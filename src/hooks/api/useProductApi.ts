@@ -35,6 +35,7 @@ export const useGetProductDetail = (productId?: number) => {
       const response = await axios.get(
         `${API_BASE_URL}/api/v1/products/${productId}`,
       );
+
       return response.data;
     },
     enabled: !!productId,

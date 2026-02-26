@@ -1,17 +1,12 @@
-import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { COLORS } from './styles/Colors';
 import Main from './pages/Main/Main';
 import Product from './pages/Product/Product';
 import Payment from './pages/Payment/Payment';
+import useKakaoLoader from './hooks/useKakaoLoader';
 
 export default function App() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAO_API}&autoload=false`;
-    script.async = true;
-    document.head.appendChild(script);
-  }, []);
+  useKakaoLoader();
 
   return (
     <div
@@ -22,7 +17,7 @@ export default function App() {
     >
       <Routes>
         <Route path='/' element={<Main />} />
-        <Route path='/product' element={<Product />} />
+        <Route path='/product/:productId' element={<Product />} />
         <Route path='/payment' element={<Payment />} />
       </Routes>
     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { IoClose } from 'react-icons/io5';
-import { COLORS } from '../../styles/Colors';
+import { COLORS } from '../../../styles/Colors';
 
 export default function ProductHeader() {
   return (
