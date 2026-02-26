@@ -4,10 +4,10 @@ import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
 test('렌더링 확인', () => {
-    render(
-        <MemoryRouter>
-            <App />
-        </MemoryRouter>
-    );
-    expect(screen.getByText('goorm-trip')).toBeInTheDocument();
+  render(
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>,
+  );
+  expect(screen.getByText('goorm-trip')).toBeInTheDocument();
 });
