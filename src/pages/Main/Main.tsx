@@ -56,31 +56,27 @@ export default function Main() {
         </div>
       </header>
 
-      <main className='px-4 py-8 mx-auto max-w-7xl'>
+      <main className='max-w-7xl mx-auto px-4 py-8'>
         <PopularProducts
           products={MOCK_PRODUCTS}
           count={5}
-          onAddToCart={(product, quantity) => {
-            setPendingItem({ product, quantity, type: 'cart' });
-            setDateModalOpen(true);
-          }}
-          onReserve={(product, quantity) => {
-            setPendingItem({ product, quantity, type: 'reserve' });
-            setDateModalOpen(true);
-          }}
+          onAddToCart={(product, quantity) =>
+            console.log('장바구니에 담기:', product, quantity)
+          }
+          onReserve={(product, quantity) =>
+            console.log('예약하기:', product, quantity)
+          }
         />
         <ProductList
           products={MOCK_PRODUCTS}
           category={category}
           search={search}
-          onAddToCart={(product, quantity) => {
-            setPendingItem({ product, quantity, type: 'cart' });
-            setDateModalOpen(true);
-          }}
-          onReserve={(product, quantity) => {
-            setPendingItem({ product, quantity, type: 'reserve' });
-            setDateModalOpen(true);
-          }}
+          onAddToCart={(product, quantity) =>
+            console.log('장바구니에 담기 : ', product, quantity)
+          }
+          onReserve={(product, quantity) =>
+            console.log('예약하기:', product, quantity)
+          }
         />
       </main>
       <CalendarModal
