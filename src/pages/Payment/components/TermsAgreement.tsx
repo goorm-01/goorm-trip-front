@@ -1,3 +1,4 @@
+import { COLORS } from '../../../styles/Colors';
 import type { TermsAccepted, TermsChangeHandler } from '../../../types/payment';
 
 interface TermsAgreementProps {
@@ -10,9 +11,12 @@ export default function TermsAgreement({
   onTermsChange,
 }: TermsAgreementProps) {
   return (
-    <div className='rounded-xl bg-[#f8f8f8] p-6'>
+    <div
+      className='rounded-xl p-6'
+      style={{ backgroundColor: COLORS.DESCRIPTION_BG }}
+    >
       <h3 className='mb-4 text-xl font-semibold'>이용약관</h3>
-      <div className='space-y-3 text-[15px] text-[#727272]'>
+      <div className='space-y-3 text-[15px]' style={{ color: COLORS.TEXT_SUB }}>
         <label className='flex cursor-pointer items-center gap-2'>
           <input
             type='checkbox'
@@ -29,7 +33,10 @@ export default function TermsAgreement({
           />
           취소 및 환불 정책 동의(필수)
         </label>
-        <div className='h-px w-full bg-neutral-300' />
+        <div
+          className='h-px w-full'
+          style={{ backgroundColor: COLORS.INFO_BOX }}
+        />
         <label className='flex cursor-pointer items-center gap-2 text-base font-bold'>
           <input
             type='checkbox'

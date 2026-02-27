@@ -9,6 +9,7 @@ import TermsAgreement from './components/TermsAgreement';
 import { useGetCartItems } from '../../hooks/api/useCartApi';
 import { useCreateOrderPreview } from '../../hooks/api/useOrderApi';
 import { useProcessPayment } from '../../hooks/api/usePaymentApi';
+import { COLORS } from '../../styles/Colors';
 import type { CartItem } from '../../types/api';
 import type {
   BookingItem,
@@ -225,14 +226,23 @@ export default function Payment() {
   const isSubmitting = createOrderPreview.isPending || processPayment.isPending;
 
   return (
-    <div className='min-h-screen w-full bg-white text-[#191919]'>
+    <div
+      className='min-h-screen w-full'
+      style={{
+        backgroundColor: COLORS.BG_PRIMARY,
+        color: COLORS.TEXT_PRIMARY,
+      }}
+    >
       <div className='mx-auto flex w-full max-w-[1512px] flex-col items-center'>
         <PaymentHeader
           total={`₩ ${selectedTotal.toLocaleString('ko-KR')}`}
           onBack={() => navigate(-1)}
         />
 
-        <div className='h-px w-full bg-neutral-200' />
+        <div
+          className='h-px w-full'
+          style={{ backgroundColor: COLORS.INFO_BOX }}
+        />
 
         <div className='flex w-full flex-col gap-10 overflow-y-auto px-6 py-8 md:px-[150px]'>
           <BookingItemsSection
@@ -243,26 +253,33 @@ export default function Payment() {
             onQuantityChange={handleQuantityChange}
           />
           {isCartLoading ? (
-            <p className='text-sm text-[#7f7f7f]'>장바구니 불러오는 중...</p>
+            <p className='text-sm' style={{ color: COLORS.TEXT_SUB }}>
+              장바구니 불러오는 중...
+            </p>
           ) : null}
           {cartError ? (
-            <p className='text-sm text-[#ff5757]'>
+            <p className='text-sm' style={{ color: COLORS.NOTIFICATION }}>
               장바구니를 불러오지 못했습니다.
             </p>
           ) : null}
           {!isCartLoading && !cartError && bookingItems.length === 0 ? (
-            <p className='text-sm text-[#7f7f7f]'>장바구니가 비어 있습니다.</p>
+            <p className='text-sm' style={{ color: COLORS.TEXT_SUB }}>
+              장바구니가 비어 있습니다.
+            </p>
           ) : null}
           {!isCartLoading &&
           !cartError &&
           bookingItems.length > 0 &&
           bookingItems.some((item) => item.productId === null) ? (
-            <p className='text-sm text-[#ff5757]'>
+            <p className='text-sm' style={{ color: COLORS.NOTIFICATION }}>
               일부 항목에 product_id가 없어 결제가 제한될 수 있습니다.
             </p>
           ) : null}
 
-          <div className='h-px w-full bg-neutral-200' />
+          <div
+            className='h-px w-full'
+            style={{ backgroundColor: COLORS.INFO_BOX }}
+          />
 
           <section className='grid grid-cols-1 gap-8 xl:grid-cols-[1fr_349px]'>
             <div className='flex flex-col gap-8'>
@@ -285,9 +302,12 @@ export default function Payment() {
             />
           </section>
 
-          <div className='h-px w-full bg-neutral-200' />
+          <div
+            className='h-px w-full'
+            style={{ backgroundColor: COLORS.INFO_BOX }}
+          />
 
-          <footer className='pb-8 text-base text-[#7f7f7f]'>
+          <footer className='pb-8 text-base' style={{ color: COLORS.TEXT_SUB }}>
             Copyright @Groom-01
           </footer>
         </div>

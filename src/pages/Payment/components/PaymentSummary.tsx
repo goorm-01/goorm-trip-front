@@ -1,3 +1,4 @@
+import { COLORS } from '../../../styles/Colors';
 import type { PaymentItem } from '../../../types/payment';
 
 interface PaymentSummaryProps {
@@ -16,21 +17,33 @@ export default function PaymentSummary({
   onSubmit,
 }: PaymentSummaryProps) {
   return (
-    <aside className='rounded-xl border border-neutral-200 p-5'>
+    <aside
+      className='inline-flex h-fit flex-col self-start rounded-xl border p-5'
+      style={{ borderColor: COLORS.INFO_BOX }}
+    >
       <h3 className='mb-4 text-xl font-semibold'>결제 정보</h3>
       <div className='space-y-4'>
         {items.map((item) => (
           <div key={item.id} className='space-y-2'>
-            <div className='flex items-center justify-between text-[15px] font-bold text-[#727272]'>
+            <div
+              className='flex items-center justify-between text-[15px] font-bold'
+              style={{ color: COLORS.TEXT_SUB }}
+            >
               <span>{item.name}</span>
               <span>{item.quantity}개</span>
             </div>
-            <div className='text-right text-base font-bold text-[#3a3a3a]'>
+            <div
+              className='text-right text-base font-bold'
+              style={{ color: COLORS.TEXT_PRIMARY }}
+            >
               {item.price}
             </div>
           </div>
         ))}
-        <div className='h-px w-full bg-neutral-300' />
+        <div
+          className='h-px w-full'
+          style={{ backgroundColor: COLORS.INFO_BOX }}
+        />
         <div className='text-right text-base font-bold'>{total}</div>
       </div>
 
@@ -38,12 +51,15 @@ export default function PaymentSummary({
         type='button'
         onClick={onSubmit}
         disabled={isSubmitting}
-        className='mt-6 h-12 w-full rounded-[10px] bg-[#2a72e5] text-base font-medium text-white'
+        className='mt-6 h-12 w-full rounded-[10px] text-base font-medium text-white'
+        style={{ backgroundColor: COLORS.BUTTON_MAIN }}
       >
         {isSubmitting ? '결제 처리중...' : '결제하기'}
       </button>
       {submitError ? (
-        <p className='mt-3 text-sm text-[#ff5757]'>{submitError}</p>
+        <p className='mt-3 text-sm' style={{ color: COLORS.NOTIFICATION }}>
+          {submitError}
+        </p>
       ) : null}
     </aside>
   );

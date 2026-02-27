@@ -1,3 +1,4 @@
+import { COLORS } from '../../../styles/Colors';
 import type { BookingItem } from '../../../types/payment';
 
 interface BookingItemsSectionProps {
@@ -19,33 +20,53 @@ export default function BookingItemsSection({
 
   return (
     <section className='flex flex-col gap-6'>
-      <h2 className='text-base text-[#7f7f7f]'>총 {selectedCount}개</h2>
+      <h2 className='text-base' style={{ color: COLORS.TEXT_SUB }}>
+        총 {selectedCount}개
+      </h2>
       <div className='flex gap-6 overflow-x-auto pb-2'>
         {items.map((item) => (
           <article
             key={item.id}
-            className='w-[360px] shrink-0 rounded-xl bg-white p-4 shadow-[0px_2px_8px_#0000000f]'
+            className='w-[360px] shrink-0 rounded-xl border p-4 shadow-sm'
+            style={{
+              backgroundColor: COLORS.BG_PRIMARY,
+              borderColor: COLORS.INFO_BOX,
+            }}
           >
             <div className='flex gap-4'>
-              <img
-                src={item.image}
-                alt={item.title}
-                className='h-[120px] w-[120px] rounded-lg object-cover'
-              />
+              <div
+                className='h-[120px] w-[120px] shrink-0 overflow-hidden rounded-lg'
+                style={{ backgroundColor: COLORS.DESCRIPTION_BG }}
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className='h-full w-full object-cover'
+                />
+              </div>
               <div className='flex min-w-0 flex-1 flex-col justify-between'>
                 <div className='flex items-start justify-between gap-3'>
                   <div>
                     <h3 className='truncate text-[15px] font-bold'>
                       {item.title}
                     </h3>
-                    <time className='text-xs text-[#7f7f7f]'>{item.date}</time>
+                    <time
+                      className='text-xs'
+                      style={{ color: COLORS.TEXT_SUB }}
+                    >
+                      {item.date}
+                    </time>
                   </div>
                   <div
-                    className={`relative mt-1 h-[18px] w-[18px] rounded-sm ${
-                      selectedItems[item.id]
-                        ? 'bg-[#008cf5]'
-                        : 'border border-neutral-300 bg-white'
-                    }`}
+                    className='relative mt-1 h-[18px] w-[18px] rounded-sm border'
+                    style={{
+                      backgroundColor: selectedItems[item.id]
+                        ? COLORS.CHECKBOX
+                        : COLORS.BG_PRIMARY,
+                      borderColor: selectedItems[item.id]
+                        ? COLORS.CHECKBOX
+                        : COLORS.INFO_BOX,
+                    }}
                   >
                     <input
                       type='checkbox'
@@ -57,23 +78,33 @@ export default function BookingItemsSection({
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <div className='text-base font-bold'>{item.price}</div>
+                  <div
+                    className='text-base font-bold'
+                    style={{ color: COLORS.BUTTON_MAIN }}
+                  >
+                    {item.price}
+                  </div>
                   <div className='flex items-center'>
                     <button
                       type='button'
                       onClick={() => onQuantityChange(item.id, -1)}
-                      className='h-5 w-5 rounded-sm text-sm font-bold text-[#7f7f7f] hover:bg-neutral-100'
+                      className='h-5 w-5 rounded-sm text-sm font-bold transition-opacity hover:opacity-70'
+                      style={{ color: COLORS.QUANTITY_TEXT }}
                       aria-label='수량 감소'
                     >
                       -
                     </button>
-                    <span className='min-w-7 text-center text-xs text-[#7f7f7f]'>
+                    <span
+                      className='min-w-7 text-center text-xs'
+                      style={{ color: COLORS.QUANTITY_TEXT }}
+                    >
                       {quantities[item.id] ?? item.quantity}
                     </span>
                     <button
                       type='button'
                       onClick={() => onQuantityChange(item.id, 1)}
-                      className='h-5 w-5 rounded-sm text-sm font-bold text-[#7f7f7f] hover:bg-neutral-100'
+                      className='h-5 w-5 rounded-sm text-sm font-bold transition-opacity hover:opacity-70'
+                      style={{ color: COLORS.QUANTITY_TEXT }}
                       aria-label='수량 증가'
                     >
                       +
