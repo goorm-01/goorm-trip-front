@@ -51,6 +51,7 @@ export interface CartRequest {
 
 export interface CartItem {
   cart_id: number;
+  product_id?: number;
   product_name: string;
   price: number;
   quantity: number;
