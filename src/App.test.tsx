@@ -1,13 +1,17 @@
 import { render, screen } from '@testing-library/react';
-// 테스팅 단계에서 라우팅이 필요한 컴포넌트를 감싸기 위해 MemoryRouter를 사용
 import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
+
+const queryClient = new QueryClient();
 
 test('렌더링 확인', () => {
   render(
-    <MemoryRouter>
-      <App />
-    </MemoryRouter>,
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
-  expect(screen.getByText('goorm-trip')).toBeInTheDocument();
+  expect(screen.getByText('GoormTrip')).toBeInTheDocument();
 });
