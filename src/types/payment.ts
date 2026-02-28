@@ -2,20 +2,14 @@ import type { ChangeEvent } from 'react';
 
 export type BookingTerm = 'cancellation' | 'refund' | 'all';
 
-export interface BookingItem {
-  id: number;
-  image: string;
-  title: string;
-  date: string;
-  price: string;
-  quantity: number;
-}
-
 export interface PaymentItem {
   id: number;
-  name: string;
+  productId: number | null;
+  image: string;
+  title: string;
+  departureDate: string;
+  unitPrice: number;
   quantity: number;
-  price: string;
 }
 
 export interface PaymentFormData {
