@@ -30,10 +30,6 @@ export function extractOrderId(data: unknown): string | null {
   return null;
 }
 
-export function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-}
-
 export function toTwelveDigitOrderNumber(orderId: string) {
   const digits = orderId.replace(/\D/g, '');
 
