@@ -26,19 +26,19 @@ export function usePaymentForm() {
   };
 
   const handleTermsChange = (term: BookingTerm) => {
-    if (term === 'all') {
-      const newValue = !termsAccepted.all;
-      setTermsAccepted({
-        cancellation: newValue,
-        refund: newValue,
-        all: newValue,
-      });
-      return;
-    }
+    setTermsAccepted((prev) => {
+      if (term === 'all') {
+        const nextValue = !prev.all;
+        return {
+          cancellation: nextValue,
+          refund: nextValue,
+          all: nextValue,
+        };
+      }
 
-    const next = { ...termsAccepted, [term]: !termsAccepted[term] };
-    next.all = next.cancellation && next.refund;
-    setTermsAccepted(next);
+      const next = { ...prev, [term]: !prev[term] };
+      return { ...next, all: next.cancellation && next.refund };
+    });
   };
 
   return { formData, termsAccepted, handleInputChange, handleTermsChange };

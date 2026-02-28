@@ -11,10 +11,6 @@ interface ValidatePaymentSubmissionArgs {
   termsAccepted: TermsAccepted;
 }
 
-export function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-}
-
 export function validatePaymentSubmission({
   bookingItems,
   selectedItems,
@@ -26,17 +22,18 @@ export function validatePaymentSubmission({
   if (!hasSelectedItems) {
     return '최소 1개 이상의 상품을 선택해주세요.';
   }
-  if (!formData.lastName || !formData.firstName || !formData.phone) {
+
+  if (
+    !formData.lastName ||
+    !formData.firstName ||
+    !formData.phone ||
+    !formData.email
+  ) {
     return '예약자 정보를 모두 입력해주세요.';
   }
-  if (!isValidEmail(formData.email)) {
-    return '유효한 이메일 형식으로 입력해주세요. (예: user@example.com)';
-  }
+
   if (!termsAccepted.cancellation || !termsAccepted.refund) {
     return '필수 약관에 동의해주세요.';
-  }
-  if (bookingItems.length === 0) {
-    return '결제할 상품이 없습니다.';
   }
 
   return null;

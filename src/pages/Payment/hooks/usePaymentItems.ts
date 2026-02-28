@@ -23,11 +23,8 @@ export function usePaymentItems(locationState: unknown) {
     () => mapCartItemsToPaymentItems(extractCartItems(cartResponse)),
     [cartResponse],
   );
-  const bookingItems = useMemo(
-    () => (previewItems.length > 0 ? previewItems : cartItems),
-    [previewItems, cartItems],
-  );
   const isPreviewFlow = previewItems.length > 0;
+  const bookingItems = isPreviewFlow ? previewItems : cartItems;
 
   return { bookingItems, isPreviewFlow, isCartLoading, cartError };
 }

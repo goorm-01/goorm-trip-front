@@ -8,15 +8,6 @@ export function usePaymentSelection(bookingItems: PaymentItem[]) {
   );
   const [quantities, setQuantities] = useState<Record<number, number>>({});
 
-  const defaultSelectedItems = useMemo(
-    () =>
-      bookingItems.reduce<Record<number, boolean>>((acc, item) => {
-        acc[item.id] = true;
-        return acc;
-      }, {}),
-    [bookingItems],
-  );
-
   const defaultQuantities = useMemo(
     () =>
       bookingItems.reduce<Record<number, number>>((acc, item) => {
@@ -27,18 +18,26 @@ export function usePaymentSelection(bookingItems: PaymentItem[]) {
   );
 
   const effectiveSelectedItems = useMemo(
-    () => ({ ...defaultSelectedItems, ...selectedItems }),
-    [defaultSelectedItems, selectedItems],
+    () =>
+      bookingItems.reduce<Record<number, boolean>>((acc, item) => {
+        acc[item.id] = selectedItems[item.id] ?? true;
+        return acc;
+      }, {}),
+    [bookingItems, selectedItems],
   );
 
   const effectiveQuantities = useMemo(
-    () => ({ ...defaultQuantities, ...quantities }),
-    [defaultQuantities, quantities],
+    () =>
+      bookingItems.reduce<Record<number, number>>((acc, item) => {
+        acc[item.id] = quantities[item.id] ?? defaultQuantities[item.id] ?? 1;
+        return acc;
+      }, {}),
+    [bookingItems, defaultQuantities, quantities],
   );
 
   const handleItemCheckChange = (itemId: number) => {
     setSelectedItems((prev) => {
-      const current = prev[itemId] ?? defaultSelectedItems[itemId] ?? false;
+      const current = prev[itemId] ?? true;
       return { ...prev, [itemId]: !current };
     });
   };

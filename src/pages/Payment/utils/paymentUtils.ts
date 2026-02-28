@@ -7,27 +7,22 @@ export function extractOrderId(data: unknown): string | null {
   }
 
   const source = data as Record<string, unknown>;
-  const candidates = [
-    source.order_id,
-    source.orderId,
-    source.order_number,
-    source.orderNumber,
-    (source.data as Record<string, unknown> | undefined)?.order_id,
-    (source.data as Record<string, unknown> | undefined)?.orderId,
-    (source.data as Record<string, unknown> | undefined)?.order_number,
-    (source.data as Record<string, unknown> | undefined)?.orderNumber,
-  ];
+  const nestedData =
+    typeof source.data === 'object' && source.data !== null
+      ? (source.data as Record<string, unknown>)
+      : undefined;
 
-  for (const candidate of candidates) {
-    if (typeof candidate === 'string' && candidate.length > 0) {
-      return candidate;
-    }
-    if (typeof candidate === 'number') {
-      return String(candidate);
-    }
+  const orderId =
+    source.order_id ??
+    source.orderId ??
+    nestedData?.order_id ??
+    nestedData?.orderId;
+
+  if (typeof orderId === 'number') {
+    return String(orderId);
   }
 
-  return null;
+  return typeof orderId === 'string' && orderId.length > 0 ? orderId : null;
 }
 
 export function toTwelveDigitOrderNumber(orderId: string) {
@@ -47,20 +42,17 @@ export function extractCartItems(data: unknown): CartItem[] {
 
   const source = data as Record<string, unknown>;
   const rawData = source.data;
+
   if (Array.isArray(rawData)) {
     return rawData as CartItem[];
   }
 
-  if (typeof rawData !== 'object' || rawData === null) {
-    return [];
+  if (typeof rawData === 'object' && rawData !== null) {
+    const cartItems = (rawData as Record<string, unknown>).cart_items;
+    return Array.isArray(cartItems) ? (cartItems as CartItem[]) : [];
   }
 
-  const cartItems = (rawData as Record<string, unknown>).cart_items;
-  if (!Array.isArray(cartItems)) {
-    return [];
-  }
-
-  return cartItems as CartItem[];
+  return [];
 }
 
 export function mapCartItemsToPaymentItems(
@@ -82,8 +74,7 @@ export function extractPreviewItems(state: unknown): unknown[] {
     return [];
   }
 
-  const source = state as Record<string, unknown>;
-  const previewItems = source.previewItems;
+  const previewItems = (state as Record<string, unknown>).previewItems;
   return Array.isArray(previewItems) ? previewItems : [];
 }
 
@@ -101,32 +92,26 @@ function toPaymentItem(item: unknown, index: number): PaymentItem | null {
   }
 
   const source = item as Record<string, unknown>;
-  const productName = source.product_name;
-  const price = source.price;
-  const quantity = source.quantity;
-  const departureDate = source.departure_date;
-  const productId = source.product_id;
 
   if (
-    typeof productName !== 'string' ||
-    typeof price !== 'number' ||
-    typeof quantity !== 'number' ||
-    typeof departureDate !== 'string' ||
-    typeof productId !== 'number'
+    typeof source.product_name !== 'string' ||
+    typeof source.price !== 'number' ||
+    typeof source.quantity !== 'number' ||
+    typeof source.departure_date !== 'string' ||
+    typeof source.product_id !== 'number'
   ) {
     return null;
   }
 
-  const cartId = source.cart_id;
-  const id = typeof cartId === 'number' ? cartId : -(index + 1);
+  const id = typeof source.cart_id === 'number' ? source.cart_id : -(index + 1);
 
   return {
     id,
-    productId,
+    productId: source.product_id,
     image: typeof source.image === 'string' ? source.image : '',
-    title: productName,
-    departureDate,
-    unitPrice: price,
-    quantity,
+    title: source.product_name,
+    departureDate: source.departure_date,
+    unitPrice: source.price,
+    quantity: source.quantity,
   };
 }

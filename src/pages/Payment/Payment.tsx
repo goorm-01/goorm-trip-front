@@ -40,6 +40,15 @@ export default function Payment() {
     termsAccepted,
     selectedTotal,
   });
+  const cartStatusMessage =
+    !isPreviewFlow && isCartLoading
+      ? '장바구니 불러오는 중...'
+      : !isPreviewFlow && cartError
+        ? '장바구니를 불러오지 못했습니다.'
+        : !isPreviewFlow && bookingItems.length === 0
+          ? '장바구니가 비어 있습니다.'
+          : null;
+  const cartStatusColor = cartError ? COLORS.NOTIFICATION : COLORS.TEXT_SUB;
 
   if (completedOrderNumber) {
     return (
@@ -77,22 +86,9 @@ export default function Payment() {
             onToggleItem={handleItemCheckChange}
             onQuantityChange={handleQuantityChange}
           />
-          {!isPreviewFlow && isCartLoading ? (
-            <p className='text-sm' style={{ color: COLORS.TEXT_SUB }}>
-              장바구니 불러오는 중...
-            </p>
-          ) : null}
-          {!isPreviewFlow && cartError ? (
-            <p className='text-sm' style={{ color: COLORS.NOTIFICATION }}>
-              장바구니를 불러오지 못했습니다.
-            </p>
-          ) : null}
-          {!isPreviewFlow &&
-          !isCartLoading &&
-          !cartError &&
-          bookingItems.length === 0 ? (
-            <p className='text-sm' style={{ color: COLORS.TEXT_SUB }}>
-              장바구니가 비어 있습니다.
+          {cartStatusMessage ? (
+            <p className='text-sm' style={{ color: cartStatusColor }}>
+              {cartStatusMessage}
             </p>
           ) : null}
 
