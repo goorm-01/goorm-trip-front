@@ -52,7 +52,7 @@ export function extractCartItems(data: unknown): CartItem[] {
   const source = data as Record<string, unknown>;
   const rawData = source.data;
   if (Array.isArray(rawData)) {
-    return rawData.filter(isCartItem);
+    return rawData as CartItem[];
   }
 
   if (typeof rawData !== 'object' || rawData === null) {
@@ -64,24 +64,7 @@ export function extractCartItems(data: unknown): CartItem[] {
     return [];
   }
 
-  return cartItems.filter(isCartItem);
-}
-
-function isCartItem(item: unknown): item is CartItem {
-  if (typeof item !== 'object' || item === null) {
-    return false;
-  }
-
-  const target = item as Record<string, unknown>;
-  return (
-    typeof target.cart_id === 'number' &&
-    typeof target.product_id === 'number' &&
-    typeof target.product_name === 'string' &&
-    typeof target.price === 'number' &&
-    typeof target.quantity === 'number' &&
-    typeof target.image === 'string' &&
-    typeof target.departure_date === 'string'
-  );
+  return cartItems as CartItem[];
 }
 
 export function mapCartItemsToPaymentItems(
