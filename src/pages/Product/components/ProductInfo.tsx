@@ -1,18 +1,26 @@
 import { useState } from 'react';
-import { COLORS } from '../../../styles/Colors';
-import type { ProductDetail } from '../../../types/api';
-import { useCreateOrderPreview } from '../../../hooks/api/useOrderApi';
-import { useAddToCart } from '../../../hooks/api/useCartApi';
-import QuantityControl from '../../../components/common/QuantityControl/QuantityControl';
+import { useNavigate } from 'react-router-dom';
+
 import ReservationButton from './ReservationButton';
 import CalendarModal from '../../../components/common/CalendarModal/CalendarModal';
+import QuantityControl from '../../../components/common/QuantityControl/QuantityControl';
+import { useAddToCart } from '../../../hooks/api/useCartApi';
+import { useCreateOrderPreview } from '../../../hooks/api/useOrderApi';
+import { COLORS } from '../../../styles/Colors';
+import type { ProductDetail } from '../../../types/api';
 
 interface ProductInfoProps {
   product: ProductDetail;
   product_id: number;
+  onClose?: () => void;
 }
 
-export default function ProductInfo({ product, product_id }: ProductInfoProps) {
+export default function ProductInfo({
+  product,
+  product_id,
+  onClose,
+}: ProductInfoProps) {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [pendingItem, setPendingItem] = useState<{
@@ -37,10 +45,14 @@ export default function ProductInfo({ product, product_id }: ProductInfoProps) {
         {
           onSuccess: (data) => {
             console.log('장바구니 추가 성공:', data);
-            // 장바구니 페이지(모달) 열기
+            // 장바구니 추가 성공 시 상품 페이지 닫기
+            if (onClose) {
+              onClose();
+            }
           },
           onError: (error) => {
             console.error('장바구니 추가 실패:', error);
+            alert('장바구니 추가에 실패했습니다. 다시 시도해주세요.');
           },
         },
       );
@@ -58,10 +70,12 @@ export default function ProductInfo({ product, product_id }: ProductInfoProps) {
         {
           onSuccess: (data) => {
             console.log('주문 생성 성공:', data);
-            // 결제 페이지로 이동
+            // 예약 성공 시 결제 페이지로 이동
+            navigate('/payment');
           },
           onError: (error) => {
             console.error('주문 생성 실패:', error);
+            alert('예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
           },
         },
       );
@@ -139,6 +153,7 @@ export default function ProductInfo({ product, product_id }: ProductInfoProps) {
           />
         </div>
       </div>
+
       <CalendarModal
         isOpen={dateModalOpen}
         onConfirm={handleDateConfirm}
