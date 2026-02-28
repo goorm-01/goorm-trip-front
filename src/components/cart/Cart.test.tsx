@@ -1,11 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+
 import Cart from './Cart';
 import { useGetCartItems, useDeleteCartItem } from '../../hooks/api/useCartApi';
 import type { CartItem } from '../../types/api';
 
 vi.mock('../../hooks/api/useCartApi');
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => mockNavigate,
+}));
 
 const SAMPLE_ITEMS: CartItem[] = [
   {
@@ -135,6 +140,21 @@ test('결제하기 버튼이 렌더링된다', () => {
 
   render(<Cart isOpen={true} onClose={() => {}} />);
   expect(screen.getByRole('button', { name: '결제하기' })).toBeInTheDocument();
+});
+
+test('결제하기 버튼 클릭 시 결제 페이지로 이동한다', async () => {
+  const user = userEvent.setup();
+  const onClose = vi.fn();
+  vi.mocked(useGetCartItems).mockReturnValue({
+    data: { data: SAMPLE_ITEMS },
+    isLoading: false,
+  } as unknown as ReturnType<typeof useGetCartItems>);
+
+  render(<Cart isOpen={true} onClose={onClose} />);
+  await user.click(screen.getByRole('button', { name: '결제하기' }));
+
+  expect(onClose).toHaveBeenCalled();
+  expect(mockNavigate).toHaveBeenCalledWith('/payment');
 });
 
 test('CartItem 삭제 버튼 클릭 시 mutate가 cart_id와 함께 호출된다', async () => {
