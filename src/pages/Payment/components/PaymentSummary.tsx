@@ -26,17 +26,21 @@ export default function PaymentSummary({
         {items.map((item) => (
           <div key={item.id} className='space-y-2'>
             <div
-              className='flex items-center justify-between text-[15px] font-bold'
+              className='flex flex-wrap items-start gap-x-2 gap-y-1 text-[15px] font-bold'
               style={{ color: COLORS.TEXT_SUB }}
             >
-              <span>{item.name}</span>
-              <span>{item.quantity}개</span>
+              <span className='min-w-0 basis-[62%] max-w-[62%] break-words whitespace-normal leading-[1.35]'>
+                {item.title}
+              </span>
+              <span className='ml-auto shrink-0 text-right'>
+                {item.quantity}개
+              </span>
             </div>
             <div
               className='text-right text-base font-bold'
               style={{ color: COLORS.TEXT_PRIMARY }}
             >
-              {item.price}
+              {(item.unitPrice * item.quantity).toLocaleString('ko-KR')} 원
             </div>
           </div>
         ))}
