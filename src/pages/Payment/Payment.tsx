@@ -3,17 +3,25 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import BookerInfoForm from './components/BookerInfoForm';
 import BookingItemsSection from './components/BookingItemsSection';
+import PaymentCompletedView from './components/PaymentCompletedView';
 import PaymentHeader from './components/PaymentHeader';
 import PaymentSummary from './components/PaymentSummary';
 import TermsAgreement from './components/TermsAgreement';
+import {
+  extractCartItems,
+  extractOrderId,
+  extractPreviewItems,
+  isValidEmail,
+  mapCartItemsToPaymentItems,
+  mapPreviewItemsToPaymentItems,
+  toTwelveDigitOrderNumber,
+} from './utils/paymentUtils';
 import { useGetCartItems } from '../../hooks/api/useCartApi';
 import { useCreateOrderPreview } from '../../hooks/api/useOrderApi';
 import { useProcessPayment } from '../../hooks/api/usePaymentApi';
 import { COLORS } from '../../styles/Colors';
-import type { CartItem } from '../../types/api';
 import type {
   BookingTerm,
-  PaymentItem,
   PaymentFormData,
   TermsAccepted,
 } from '../../types/payment';
@@ -47,20 +55,21 @@ export default function Payment() {
     {},
   );
   const [quantities, setQuantities] = useState<Record<number, number>>({});
-  // 예약자 입력 폼 상태
   const [formData, setFormData] = useState<PaymentFormData>({
     lastName: '',
     firstName: '',
     phone: '',
     email: '',
   });
-  // 약관 동의 상태
   const [termsAccepted, setTermsAccepted] = useState<TermsAccepted>({
     cancellation: false,
     refund: false,
     all: false,
   });
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [completedOrderNumber, setCompletedOrderNumber] = useState<
+    string | null
+  >(null);
 
   const defaultSelectedItems = useMemo(
     () =>
@@ -182,7 +191,6 @@ export default function Payment() {
         (item) => effectiveSelectedItems[item.id],
       );
 
-      // 주문 미리보기 생성 payload
       const previewResponse = await createOrderPreview.mutateAsync({
         products: selectedBookingItems.map((item) => ({
           product_id: item.productId,
@@ -200,12 +208,14 @@ export default function Payment() {
         return;
       }
 
-      // 결제 요청 payload
-      await processPayment.mutateAsync({
+      const paymentResponse = await processPayment.mutateAsync({
         order_id: orderId,
         total_amount: selectedTotal,
         payment_method: 'CARD',
       });
+
+      const finalizedOrderId = extractOrderId(paymentResponse) ?? orderId;
+      setCompletedOrderNumber(toTwelveDigitOrderNumber(finalizedOrderId));
     } catch {
       setSubmitError(
         '결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
@@ -214,6 +224,15 @@ export default function Payment() {
   };
 
   const isSubmitting = createOrderPreview.isPending || processPayment.isPending;
+
+  if (completedOrderNumber) {
+    return (
+      <PaymentCompletedView
+        orderNumber={completedOrderNumber}
+        onConfirm={() => navigate('/')}
+      />
+    );
+  }
 
   return (
     <div
@@ -299,142 +318,4 @@ export default function Payment() {
       </div>
     </div>
   );
-}
-
-function extractOrderId(data: unknown): string | null {
-  if (typeof data !== 'object' || data === null) {
-    return null;
-  }
-
-  const source = data as Record<string, unknown>;
-  // 백엔드 응답 포맷별 주문번호 후보 키
-  const candidates = [
-    source.order_id,
-    source.orderId,
-    source.order_number,
-    source.orderNumber,
-    (source.data as Record<string, unknown> | undefined)?.order_id,
-    (source.data as Record<string, unknown> | undefined)?.orderId,
-    (source.data as Record<string, unknown> | undefined)?.order_number,
-    (source.data as Record<string, unknown> | undefined)?.orderNumber,
-  ];
-
-  for (const candidate of candidates) {
-    if (typeof candidate === 'string' && candidate.length > 0) {
-      return candidate;
-    }
-    if (typeof candidate === 'number') {
-      return String(candidate);
-    }
-  }
-
-  return null;
-}
-
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-}
-
-function extractCartItems(data: unknown): CartItem[] {
-  if (typeof data !== 'object' || data === null) {
-    return [];
-  }
-
-  const source = data as Record<string, unknown>;
-  const rawData = source.data;
-  if (Array.isArray(rawData)) {
-    return rawData.filter(isCartItem);
-  }
-
-  if (typeof rawData !== 'object' || rawData === null) {
-    return [];
-  }
-
-  const cartItems = (rawData as Record<string, unknown>).cart_items;
-  if (!Array.isArray(cartItems)) {
-    return [];
-  }
-
-  return cartItems.filter(isCartItem);
-}
-
-function isCartItem(item: unknown): item is CartItem {
-  if (typeof item !== 'object' || item === null) {
-    return false;
-  }
-
-  const target = item as Record<string, unknown>;
-  return (
-    typeof target.cart_id === 'number' &&
-    typeof target.product_id === 'number' &&
-    typeof target.product_name === 'string' &&
-    typeof target.price === 'number' &&
-    typeof target.quantity === 'number' &&
-    typeof target.image === 'string' &&
-    typeof target.departure_date === 'string'
-  );
-}
-
-function mapCartItemsToPaymentItems(cartItems: CartItem[]): PaymentItem[] {
-  return cartItems.map((item) => ({
-    id: item.cart_id,
-    productId: item.product_id,
-    image: item.image,
-    title: item.product_name,
-    departureDate: item.departure_date,
-    unitPrice: item.price,
-    quantity: item.quantity,
-  }));
-}
-
-function extractPreviewItems(state: unknown): unknown[] {
-  if (typeof state !== 'object' || state === null) {
-    return [];
-  }
-
-  const source = state as Record<string, unknown>;
-  const previewItems = source.previewItems;
-  return Array.isArray(previewItems) ? previewItems : [];
-}
-
-function mapPreviewItemsToPaymentItems(previewItems: unknown[]): PaymentItem[] {
-  return previewItems
-    .map((item, index) => toPaymentItem(item, index))
-    .filter((item): item is PaymentItem => item !== null);
-}
-
-function toPaymentItem(item: unknown, index: number): PaymentItem | null {
-  if (typeof item !== 'object' || item === null) {
-    return null;
-  }
-
-  const source = item as Record<string, unknown>;
-  const productName = source.product_name;
-  const price = source.price;
-  const quantity = source.quantity;
-  const departureDate = source.departure_date;
-  const productId = source.product_id;
-
-  if (
-    typeof productName !== 'string' ||
-    typeof price !== 'number' ||
-    typeof quantity !== 'number' ||
-    typeof departureDate !== 'string' ||
-    typeof productId !== 'number'
-  ) {
-    return null;
-  }
-
-  const cartId = source.cart_id;
-  const id = typeof cartId === 'number' ? cartId : -(index + 1);
-
-  return {
-    id,
-    productId,
-    image: typeof source.image === 'string' ? source.image : '',
-    title: productName,
-    departureDate,
-    unitPrice: price,
-    quantity,
-  };
 }
