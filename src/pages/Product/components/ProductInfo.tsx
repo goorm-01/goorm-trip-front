@@ -71,7 +71,22 @@ export default function ProductInfo({
           onSuccess: (data) => {
             console.log('주문 생성 성공:', data);
             // 예약 성공 시 결제 페이지로 이동
-            navigate('/payment');
+            navigate('/payment', {
+              state: {
+                orderData: data?.data,
+                previewItems: [
+                  {
+                    id: product_id,
+                    product_id,
+                    product_name: pendingItem.product.product_name,
+                    price: pendingItem.product.price,
+                    quantity: pendingItem.quantity,
+                    departure_date: date,
+                    image: pendingItem.product.images?.[0] ?? '',
+                  },
+                ],
+              },
+            });
           },
           onError: (error) => {
             console.error('주문 생성 실패:', error);
