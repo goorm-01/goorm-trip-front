@@ -4,7 +4,7 @@ export type BookingTerm = 'cancellation' | 'refund' | 'all';
 
 export interface PaymentItem {
   id: number;
-  productId: number | null;
+  productId: number;
   image: string;
   title: string;
   departureDate: string;

@@ -1,5 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import BookerInfoForm from './components/BookerInfoForm';
 import BookingItemsSection from './components/BookingItemsSection';
@@ -12,19 +12,14 @@ import { useProcessPayment } from '../../hooks/api/usePaymentApi';
 import { COLORS } from '../../styles/Colors';
 import type { CartItem } from '../../types/api';
 import type {
-  BookingItem,
   BookingTerm,
+  PaymentItem,
   PaymentFormData,
   TermsAccepted,
 } from '../../types/payment';
 
-interface PaymentBookingItem extends BookingItem {
-  productId: number | null;
-  departureDate: string;
-  unitPrice: number;
-}
-
 export default function Payment() {
+  const location = useLocation();
   const navigate = useNavigate();
   const {
     data: cartResponse,
@@ -33,10 +28,20 @@ export default function Payment() {
   } = useGetCartItems();
   const createOrderPreview = useCreateOrderPreview();
   const processPayment = useProcessPayment();
-  const bookingItems = useMemo(
-    () => mapCartItemsToBookingItems(extractCartItems(cartResponse)),
+
+  const previewItems = useMemo(
+    () => mapPreviewItemsToPaymentItems(extractPreviewItems(location.state)),
+    [location.state],
+  );
+  const cartItems = useMemo(
+    () => mapCartItemsToPaymentItems(extractCartItems(cartResponse)),
     [cartResponse],
   );
+  const bookingItems = useMemo(
+    () => (previewItems.length > 0 ? previewItems : cartItems),
+    [previewItems, cartItems],
+  );
+  const isPreviewFlow = previewItems.length > 0;
 
   const [selectedItems, setSelectedItems] = useState<Record<number, boolean>>(
     {},
@@ -125,16 +130,10 @@ export default function Payment() {
   const selectedPaymentItems = useMemo(() => {
     return bookingItems
       .filter((item) => effectiveSelectedItems[item.id])
-      .map((item) => {
-        const quantity = quantities[item.id] ?? item.quantity;
-        const totalPrice = item.unitPrice * quantity;
-        return {
-          id: item.id,
-          name: item.title,
-          quantity,
-          price: `${totalPrice.toLocaleString('ko-KR')} 원`,
-        };
-      });
+      .map((item) => ({
+        ...item,
+        quantity: quantities[item.id] ?? item.quantity,
+      }));
   }, [bookingItems, effectiveSelectedItems, quantities]);
 
   const selectedTotal = useMemo(() => {
@@ -164,7 +163,7 @@ export default function Payment() {
       return '필수 약관에 동의해주세요.';
     }
     if (bookingItems.length === 0) {
-      return '장바구니에 상품이 없습니다.';
+      return '결제할 상품이 없습니다.';
     }
     return null;
   };
@@ -182,20 +181,11 @@ export default function Payment() {
       const selectedBookingItems = bookingItems.filter(
         (item) => effectiveSelectedItems[item.id],
       );
-      const hasInvalidProduct = selectedBookingItems.some(
-        (item) => item.productId === null,
-      );
-      if (hasInvalidProduct) {
-        setSubmitError(
-          '장바구니 데이터에 상품 ID가 없어 주문을 생성할 수 없습니다.',
-        );
-        return;
-      }
 
       // 주문 미리보기 생성 payload
       const previewResponse = await createOrderPreview.mutateAsync({
         products: selectedBookingItems.map((item) => ({
-          product_id: item.productId as number,
+          product_id: item.productId,
           quantity: quantities[item.id] ?? item.quantity,
           departure_date: item.departureDate,
         })),
@@ -252,27 +242,22 @@ export default function Payment() {
             onToggleItem={handleItemCheckChange}
             onQuantityChange={handleQuantityChange}
           />
-          {isCartLoading ? (
+          {!isPreviewFlow && isCartLoading ? (
             <p className='text-sm' style={{ color: COLORS.TEXT_SUB }}>
               장바구니 불러오는 중...
             </p>
           ) : null}
-          {cartError ? (
+          {!isPreviewFlow && cartError ? (
             <p className='text-sm' style={{ color: COLORS.NOTIFICATION }}>
               장바구니를 불러오지 못했습니다.
             </p>
           ) : null}
-          {!isCartLoading && !cartError && bookingItems.length === 0 ? (
+          {!isPreviewFlow &&
+          !isCartLoading &&
+          !cartError &&
+          bookingItems.length === 0 ? (
             <p className='text-sm' style={{ color: COLORS.TEXT_SUB }}>
               장바구니가 비어 있습니다.
-            </p>
-          ) : null}
-          {!isCartLoading &&
-          !cartError &&
-          bookingItems.length > 0 &&
-          bookingItems.some((item) => item.productId === null) ? (
-            <p className='text-sm' style={{ color: COLORS.NOTIFICATION }}>
-              일부 항목에 product_id가 없어 결제가 제한될 수 있습니다.
             </p>
           ) : null}
 
@@ -357,6 +342,10 @@ function extractCartItems(data: unknown): CartItem[] {
 
   const source = data as Record<string, unknown>;
   const rawData = source.data;
+  if (Array.isArray(rawData)) {
+    return rawData.filter(isCartItem);
+  }
+
   if (typeof rawData !== 'object' || rawData === null) {
     return [];
   }
@@ -377,6 +366,7 @@ function isCartItem(item: unknown): item is CartItem {
   const target = item as Record<string, unknown>;
   return (
     typeof target.cart_id === 'number' &&
+    typeof target.product_id === 'number' &&
     typeof target.product_name === 'string' &&
     typeof target.price === 'number' &&
     typeof target.quantity === 'number' &&
@@ -385,30 +375,66 @@ function isCartItem(item: unknown): item is CartItem {
   );
 }
 
-function mapCartItemsToBookingItems(
-  cartItems: CartItem[],
-): PaymentBookingItem[] {
+function mapCartItemsToPaymentItems(cartItems: CartItem[]): PaymentItem[] {
   return cartItems.map((item) => ({
     id: item.cart_id,
-    productId: typeof item.product_id === 'number' ? item.product_id : null,
+    productId: item.product_id,
     image: item.image,
     title: item.product_name,
-    date: formatDateForDisplay(item.departure_date),
     departureDate: item.departure_date,
     unitPrice: item.price,
-    price: `₩ ${item.price.toLocaleString('ko-KR')}`,
     quantity: item.quantity,
   }));
 }
 
-function formatDateForDisplay(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
+function extractPreviewItems(state: unknown): unknown[] {
+  if (typeof state !== 'object' || state === null) {
+    return [];
   }
 
-  const yy = String(date.getFullYear()).slice(2);
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yy}.${mm}.${dd}`;
+  const source = state as Record<string, unknown>;
+  const previewItems = source.previewItems;
+  return Array.isArray(previewItems) ? previewItems : [];
+}
+
+function mapPreviewItemsToPaymentItems(previewItems: unknown[]): PaymentItem[] {
+  return previewItems
+    .map((item, index) => toPaymentItem(item, index))
+    .filter((item): item is PaymentItem => item !== null);
+}
+
+function toPaymentItem(item: unknown, index: number): PaymentItem | null {
+  if (typeof item !== 'object' || item === null) {
+    return null;
+  }
+
+  const source = item as Record<string, unknown>;
+  const productName = source.product_name;
+  const price = source.price;
+  const quantity = source.quantity;
+  const departureDate = source.departure_date;
+  const productId = source.product_id;
+
+  if (
+    typeof productName !== 'string' ||
+    typeof price !== 'number' ||
+    typeof quantity !== 'number' ||
+    typeof departureDate !== 'string' ||
+    typeof productId !== 'number'
+  ) {
+    return null;
+  }
+
+  const cartId = source.cart_id;
+  const id = typeof cartId === 'number' ? cartId : -(index + 1);
+
+  return {
+    id,
+    productId,
+    image: typeof source.image === 'string' ? source.image : '',
+    title: productName,
+    departureDate,
+    unitPrice: price,
+    quantity,
+  };
 }
