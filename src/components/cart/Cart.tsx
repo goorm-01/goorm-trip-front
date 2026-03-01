@@ -4,6 +4,7 @@ import CartItem from './CartItem';
 import { useGetCartItems, useDeleteCartItem } from '../../hooks/api/useCartApi';
 import { COLORS } from '../../styles/Colors';
 
+
 interface CartProps {
   isOpen: boolean;
   onClose: () => void;

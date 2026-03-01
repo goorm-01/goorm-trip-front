@@ -5,7 +5,6 @@ import ReservationButton from './ReservationButton';
 import CalendarModal from '../../../components/common/CalendarModal/CalendarModal';
 import QuantityControl from '../../../components/common/QuantityControl/QuantityControl';
 import { useAddToCart } from '../../../hooks/api/useCartApi';
-import { useCreateOrderPreview } from '../../../hooks/api/useOrderApi';
 import { COLORS } from '../../../styles/Colors';
 import type { ProductDetail } from '../../../types/api';
 
@@ -30,7 +29,6 @@ export default function ProductInfo({
   } | null>(null);
 
   const addToCartMutation = useAddToCart();
-  const createOrderMutation = useCreateOrderPreview();
 
   const handleDateConfirm = (date: string) => {
     if (!pendingItem) return;
@@ -57,28 +55,21 @@ export default function ProductInfo({
         },
       );
     } else if (pendingItem.type === 'reserve') {
-      createOrderMutation.mutate(
-        {
-          products: [
+      navigate('/payment', {
+        state: {
+          previewItems: [
             {
-              product_id: product_id,
+              id: product_id,
+              product_id,
+              product_name: pendingItem.product.product_name,
+              price: pendingItem.product.price,
               quantity: pendingItem.quantity,
               departure_date: date,
+              image: pendingItem.product.images?.[0] ?? '',
             },
           ],
         },
-        {
-          onSuccess: (data) => {
-            console.log('주문 생성 성공:', data);
-            // 예약 성공 시 결제 페이지로 이동
-            navigate('/payment');
-          },
-          onError: (error) => {
-            console.error('주문 생성 실패:', error);
-            alert('예약 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
-          },
-        },
-      );
+      });
     }
 
     setDateModalOpen(false);
