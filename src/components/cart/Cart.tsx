@@ -1,5 +1,7 @@
-import { useGetCartItems, useDeleteCartItem } from '../../hooks/api/useCartApi';
+import { useNavigate } from 'react-router-dom';
+
 import CartItem from './CartItem';
+import { useGetCartItems, useDeleteCartItem } from '../../hooks/api/useCartApi';
 import { COLORS } from '../../styles/Colors';
 
 interface CartProps {
@@ -8,6 +10,7 @@ interface CartProps {
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
+  const navigate = useNavigate();
   const { data, isLoading } = useGetCartItems();
   const { mutate: deleteItem } = useDeleteCartItem();
 
@@ -85,6 +88,10 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           <button
             type='button'
             aria-label='결제하기'
+            onClick={() => {
+              onClose();
+              navigate('/payment');
+            }}
             className='w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium'
           >
             결제하기
