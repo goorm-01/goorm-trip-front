@@ -15,7 +15,8 @@ import { COLORS } from '../../styles/Colors';
 export default function Payment() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { bookingItems } = usePaymentItems(location.state);
+  const { bookingItems, isPreviewFlow, isCartLoading, cartError } =
+    usePaymentItems(location.state);
   const {
     effectiveSelectedItems,
     effectiveQuantities,
@@ -39,6 +40,15 @@ export default function Payment() {
     termsAccepted,
     selectedTotal,
   });
+  const cartStatusMessage =
+    !isPreviewFlow && isCartLoading
+      ? '장바구니 불러오는 중...'
+      : !isPreviewFlow && cartError
+        ? '장바구니를 불러오지 못했습니다.'
+        : !isPreviewFlow && bookingItems.length === 0
+          ? '장바구니가 비어 있습니다.'
+          : null;
+  const cartStatusColor = cartError ? COLORS.NOTIFICATION : COLORS.TEXT_SUB;
 
   if (completedOrderNumber) {
     return (
@@ -76,6 +86,11 @@ export default function Payment() {
             onToggleItem={handleItemCheckChange}
             onQuantityChange={handleQuantityChange}
           />
+          {cartStatusMessage ? (
+            <p className='text-sm' style={{ color: cartStatusColor }}>
+              {cartStatusMessage}
+            </p>
+          ) : null}
 
           <div
             className='h-px w-full'

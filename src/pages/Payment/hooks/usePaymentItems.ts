@@ -9,7 +9,11 @@ import {
 } from '../utils/paymentUtils';
 
 export function usePaymentItems(locationState: unknown) {
-  const { data: cartResponse } = useGetCartItems();
+  const {
+    data: cartResponse,
+    isLoading: isCartLoading,
+    error: cartError,
+  } = useGetCartItems();
 
   const previewItems = useMemo(
     () => mapPreviewItemsToPaymentItems(extractPreviewItems(locationState)),
@@ -22,5 +26,5 @@ export function usePaymentItems(locationState: unknown) {
   const isPreviewFlow = previewItems.length > 0;
   const bookingItems = isPreviewFlow ? previewItems : cartItems;
 
-  return { bookingItems };
+  return { bookingItems, isPreviewFlow, isCartLoading, cartError };
 }

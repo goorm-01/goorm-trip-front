@@ -46,7 +46,7 @@ export default function BookingItemsSection({
             >
               <input
                 type='checkbox'
-                checked={selectedItems[item.id]}
+                checked={selectedItems[item.id] ?? false}
                 onChange={() => onToggleItem(item.id)}
                 className='absolute -left-[3px] -top-[3px] h-6 w-6'
               />
@@ -99,7 +99,7 @@ export default function BookingItemsSection({
                       className='min-w-7 text-center text-xs'
                       style={{ color: COLORS.QUANTITY_TEXT }}
                     >
-                      {quantities[item.id]}
+                      {quantities[item.id] ?? item.quantity}
                     </span>
                     <button
                       type='button'
@@ -123,6 +123,10 @@ export default function BookingItemsSection({
 
 function formatDateForDisplay(value: string): string {
   const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
   const yy = String(date.getFullYear()).slice(2);
   const mm = String(date.getMonth() + 1).padStart(2, '0');
   const dd = String(date.getDate()).padStart(2, '0');

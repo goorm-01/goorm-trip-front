@@ -53,31 +53,39 @@ export function useSubmitPayment({
       return;
     }
 
-    const selectedProducts = bookingItems
-      .filter((item) => effectiveSelectedItems[item.id])
-      .map((item) => ({
-        product_id: item.productId,
-        quantity: effectiveQuantities[item.id],
-        departure_date: item.departureDate,
-      }));
+    try {
+      const selectedProducts = bookingItems
+        .filter((item) => effectiveSelectedItems[item.id])
+        .map((item) => ({
+          product_id: item.productId,
+          quantity: effectiveQuantities[item.id] ?? item.quantity,
+          departure_date: item.departureDate,
+        }));
 
-    const previewResponse = await createOrderPreview.mutateAsync({
-      products: selectedProducts,
-    });
+      const previewResponse = await createOrderPreview.mutateAsync({
+        products: selectedProducts,
+      });
 
-    const orderId = extractOrderId(previewResponse);
-    if (!orderId) {
-      setSubmitError('주문 정보 생성에 실패했습니다.');
-      return;
+      const orderId = extractOrderId(previewResponse);
+      if (!orderId) {
+        setSubmitError('주문 정보 생성에 실패했습니다.');
+        return;
+      }
+
+      const paymentResponse = await processPayment.mutateAsync({
+        order_id: orderId,
+        total_amount: selectedTotal,
+        payment_method: 'CARD',
+      });
+
+      setCompletedOrderNumber(
+        toTwelveDigitOrderNumber(extractOrderId(paymentResponse) ?? orderId),
+      );
+    } catch {
+      setSubmitError(
+        '결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      );
     }
-
-    await processPayment.mutateAsync({
-      order_id: orderId,
-      total_amount: selectedTotal,
-      payment_method: 'CARD',
-    });
-
-    setCompletedOrderNumber(toTwelveDigitOrderNumber(orderId));
   };
 
   const isSubmitting = createOrderPreview.isPending || processPayment.isPending;
