@@ -12,11 +12,17 @@ export function extractOrderId(data: unknown): string | null {
       ? (source.data as Record<string, unknown>)
       : undefined;
 
+  const orderIdKeys = [
+    'order_id',
+    'orderId',
+    'order_no',
+    'orderNo',
+    'order_number',
+    'orderNumber',
+  ] as const;
   const orderId =
-    source.order_id ??
-    source.orderId ??
-    nestedData?.order_id ??
-    nestedData?.orderId;
+    findOrderIdFromObject(source, orderIdKeys) ??
+    findOrderIdFromObject(nestedData, orderIdKeys);
 
   if (typeof orderId === 'number') {
     return String(orderId);
@@ -25,14 +31,22 @@ export function extractOrderId(data: unknown): string | null {
   return typeof orderId === 'string' && orderId.length > 0 ? orderId : null;
 }
 
-export function toTwelveDigitOrderNumber(orderId: string) {
-  const digits = orderId.replace(/\D/g, '');
-
-  if (digits.length >= 12) {
-    return digits.slice(0, 12);
+function findOrderIdFromObject(
+  target: Record<string, unknown> | undefined,
+  keys: readonly string[],
+) {
+  if (!target) {
+    return undefined;
   }
 
-  return digits.padStart(12, '0');
+  for (const key of keys) {
+    const value = target[key];
+    if (value !== undefined && value !== null) {
+      return value;
+    }
+  }
+
+  return undefined;
 }
 
 export function extractCartItems(data: unknown): CartItem[] {

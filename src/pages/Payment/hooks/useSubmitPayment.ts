@@ -7,10 +7,7 @@ import type {
   PaymentItem,
   TermsAccepted,
 } from '../../../types/payment';
-import {
-  extractOrderId,
-  toTwelveDigitOrderNumber,
-} from '../utils/paymentUtils';
+import { extractOrderId } from '../utils/paymentUtils';
 import { validatePaymentSubmission } from '../utils/paymentValidators';
 
 interface UseSubmitPaymentArgs {
@@ -78,9 +75,7 @@ export function useSubmitPayment({
         payment_method: 'CARD',
       });
 
-      setCompletedOrderNumber(
-        toTwelveDigitOrderNumber(extractOrderId(paymentResponse) ?? orderId),
-      );
+      setCompletedOrderNumber(extractOrderId(paymentResponse) ?? orderId);
     } catch {
       setSubmitError(
         '결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
