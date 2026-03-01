@@ -25,7 +25,6 @@ export function usePaymentSelection(bookingItems: PaymentItem[]) {
       }, {}),
     [bookingItems, selectedItems],
   );
-
   const effectiveQuantities = useMemo(
     () =>
       bookingItems.reduce<Record<number, number>>((acc, item) => {

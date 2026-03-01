@@ -2,27 +2,12 @@ import type { CartItem } from '../../../types/api';
 import type { PaymentItem } from '../../../types/payment';
 
 export function extractOrderId(data: unknown): string | null {
-  if (typeof data !== 'object' || data === null) {
-    return null;
-  }
-
-  const source = data as Record<string, unknown>;
-  const nestedData =
-    typeof source.data === 'object' && source.data !== null
-      ? (source.data as Record<string, unknown>)
-      : undefined;
-
-  const orderId =
-    source.order_id ??
-    source.orderId ??
-    nestedData?.order_id ??
-    nestedData?.orderId;
-
-  if (typeof orderId === 'number') {
-    return String(orderId);
-  }
-
-  return typeof orderId === 'string' && orderId.length > 0 ? orderId : null;
+  const source = data as {
+    order_id: string | number;
+    data: { order_id: string | number };
+  };
+  const orderId = source.order_id || source.data.order_id;
+  return orderId ? String(orderId) : null;
 }
 
 export function toTwelveDigitOrderNumber(orderId: string) {
@@ -36,23 +21,8 @@ export function toTwelveDigitOrderNumber(orderId: string) {
 }
 
 export function extractCartItems(data: unknown): CartItem[] {
-  if (typeof data !== 'object' || data === null) {
-    return [];
-  }
-
-  const source = data as Record<string, unknown>;
-  const rawData = source.data;
-
-  if (Array.isArray(rawData)) {
-    return rawData as CartItem[];
-  }
-
-  if (typeof rawData === 'object' && rawData !== null) {
-    const cartItems = (rawData as Record<string, unknown>).cart_items;
-    return Array.isArray(cartItems) ? (cartItems as CartItem[]) : [];
-  }
-
-  return [];
+  const response = data as { data: CartItem[] };
+  return response.data;
 }
 
 export function mapCartItemsToPaymentItems(
@@ -70,48 +40,30 @@ export function mapCartItemsToPaymentItems(
 }
 
 export function extractPreviewItems(state: unknown): unknown[] {
-  if (typeof state !== 'object' || state === null) {
-    return [];
-  }
-
-  const previewItems = (state as Record<string, unknown>).previewItems;
-  return Array.isArray(previewItems) ? previewItems : [];
+  const locationState = state as { previewItems: PreviewItem[] };
+  return locationState.previewItems;
 }
 
 export function mapPreviewItemsToPaymentItems(
-  previewItems: unknown[],
+  previewItems: PreviewItem[],
 ): PaymentItem[] {
-  return previewItems
-    .map((item, index) => toPaymentItem(item, index))
-    .filter((item): item is PaymentItem => item !== null);
+  return previewItems.map((item) => ({
+    id: item.id,
+    productId: item.product_id,
+    image: item.image,
+    title: item.product_name,
+    departureDate: item.departure_date,
+    unitPrice: item.price,
+    quantity: item.quantity,
+  }));
 }
 
-function toPaymentItem(item: unknown, index: number): PaymentItem | null {
-  if (typeof item !== 'object' || item === null) {
-    return null;
-  }
-
-  const source = item as Record<string, unknown>;
-
-  if (
-    typeof source.product_name !== 'string' ||
-    typeof source.price !== 'number' ||
-    typeof source.quantity !== 'number' ||
-    typeof source.departure_date !== 'string' ||
-    typeof source.product_id !== 'number'
-  ) {
-    return null;
-  }
-
-  const id = typeof source.cart_id === 'number' ? source.cart_id : -(index + 1);
-
-  return {
-    id,
-    productId: source.product_id,
-    image: typeof source.image === 'string' ? source.image : '',
-    title: source.product_name,
-    departureDate: source.departure_date,
-    unitPrice: source.price,
-    quantity: source.quantity,
-  };
+interface PreviewItem {
+  id: number;
+  product_id: number;
+  product_name: string;
+  price: number;
+  quantity: number;
+  departure_date: string;
+  image: string;
 }
