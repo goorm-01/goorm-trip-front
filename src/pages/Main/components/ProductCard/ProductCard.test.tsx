@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import ProductCard from './ProductCard';
-import type { Product } from '../../../../types/api';
+import type { Product } from '../../../../types/product';
 
 const SAMPLE_PRODUCT: Product = {
   product_id: 1,
   product_name: '제주도 3박 4일 여행',
   category: '자연관광',
   price: 890000,
-  images: ['https://placehold.co/400x300?text=제주3박4일'],
+  image: 'https://placehold.co/400x300?text=제주3박4일',
 };
 
 describe('ProductCard', () => {

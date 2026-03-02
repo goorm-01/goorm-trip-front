@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 
 import PopularProducts from './PopularProducts';
-import type { Product } from '../../../../types/api';
+import type { Product } from '../../../../types/product';
 
 const SAMPLE_PRODUCTS: Product[] = [
   {
@@ -11,21 +11,21 @@ const SAMPLE_PRODUCTS: Product[] = [
     product_name: '제주도 3박 4일 여행',
     category: '자연관광',
     price: 890000,
-    images: ['https://placehold.co/400x300?text=제주'],
+    image: 'https://placehold.co/400x300?text=제주',
   },
   {
     product_id: 2,
     product_name: '부산 당일치기',
     category: '도시여행',
     price: 230000,
-    images: ['https://placehold.co/400x300?text=부산'],
+    image: 'https://placehold.co/400x300?text=부산',
   },
   {
     product_id: 3,
     product_name: '강릉 3박 4일 여행',
     category: '도시여행',
     price: 660000,
-    images: ['https://placehold.co/400x300?text=강릉'],
+    image: 'https://placehold.co/400x300?text=강릉',
   },
 ];
 
