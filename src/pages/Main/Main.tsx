@@ -64,7 +64,7 @@ export default function Main() {
               price: pendingItem.product.price,
               quantity: pendingItem.quantity,
               departure_date: date,
-              image: pendingItem.product.images,
+              image: pendingItem.product.image,
             },
           ],
         },

@@ -46,7 +46,7 @@ export default function PopularProducts({
     >
       {/* 배경 이미지 */}
       <img
-        src={current.images?.[0]}
+        src={current.image}
         alt={current.product_name}
         className='absolute inset-0 object-cover w-full h-full'
       />

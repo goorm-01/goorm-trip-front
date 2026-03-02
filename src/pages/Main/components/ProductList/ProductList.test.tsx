@@ -9,21 +9,21 @@ const SAMPLE_PRODUCTS: Product[] = [
     product_name: '제주도 3박 4일 여행',
     category: '자연관광',
     price: 890000,
-    images: ['https://placehold.co/400x300?text=제주3박4일'],
+    image: 'https://placehold.co/400x300?text=제주3박4일',
   },
   {
     product_id: 2,
     product_name: '부산 당일치기',
     category: '도시여행',
     price: 230000,
-    images: ['https://placehold.co/400x300?text=부산당일'],
+    image: 'https://placehold.co/400x300?text=부산당일',
   },
   {
     product_id: 3,
     product_name: '광주 2박 3일 여행',
     category: '도시여행',
     price: 460000,
-    images: ['https://placehold.co/400x300?text=광주2박3일'],
+    image: 'https://placehold.co/400x300?text=광주2박3일',
   },
 ];
 
