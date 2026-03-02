@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import type { Product } from '../../../../types/product';
-import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { AiOutlineShopping } from 'react-icons/ai';
+import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
+
 import QuantityControl from '../../../../components/common/QuantityControl/QuantityControl';
 import { COLORS } from '../../../../styles/Colors';
+import type { Product } from '../../../../types/product';
 
 interface PopularProductsProps {
   products: Product[];
@@ -39,7 +40,7 @@ export default function PopularProducts({
   return (
     <section
       aria-label='인기 상품'
-      className='relative w-full h-80 rounded-2xl overflow-hidden mb-8'
+      className='relative w-full mb-8 overflow-hidden h-80 rounded-2xl'
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -47,7 +48,7 @@ export default function PopularProducts({
       <img
         src={current.image}
         alt={current.product_name}
-        className='absolute inset-0 w-full h-full object-cover'
+        className='absolute inset-0 object-cover w-full h-full'
       />
 
       {/* 하단 그라디언트 오버레이 */}
@@ -55,7 +56,7 @@ export default function PopularProducts({
 
       {/* 상품 정보 */}
       <div className='absolute bottom-0 left-0 right-0 p-6 text-white'>
-        <span className='text-xs font-medium bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full'>
+        <span className='px-2 py-1 text-xs font-medium rounded-full bg-white/20 backdrop-blur-sm'>
           {current.category}
         </span>
         <h2 className='mt-2 text-xl font-bold line-clamp-1'>
@@ -75,8 +76,7 @@ export default function PopularProducts({
       <button
         aria-label='이전 슬라이드'
         onClick={handlePrev}
-        className='absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white/30 backdrop-blur-sm      
-    rounded-full text-white hover:bg-white/50 transition-colors cursor-pointer'
+        className='absolute flex items-center justify-center text-white transition-colors -translate-y-1/2 rounded-full cursor-pointer left-4 top-1/2 w-9 h-9 bg-white/30 backdrop-blur-sm hover:bg-white/50'
       >
         <IoChevronBack />
       </button>
@@ -107,7 +107,7 @@ export default function PopularProducts({
             type='button'
             aria-label='장바구니에 추가'
             onClick={() => onAddToCart(current, quantity)}
-            className='p-2 border rounded-lg transition-colors'
+            className='p-2 transition-colors border rounded-lg'
             style={{
               borderColor: cartHovered ? COLORS.CART : COLORS.INFO_BOX,
               color: cartHovered ? COLORS.BUTTON_MAIN : COLORS.TEXT_SUB,
@@ -120,7 +120,7 @@ export default function PopularProducts({
           <button
             type='button'
             onClick={() => onReserve(current, quantity)}
-            className='px-10 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium'
+            className='px-10 py-3 text-sm font-medium text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600'
           >
             예약하기
           </button>

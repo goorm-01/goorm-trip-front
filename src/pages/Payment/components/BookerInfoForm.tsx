@@ -15,7 +15,7 @@ export default function BookerInfoForm({
 }: BookerInfoFormProps) {
   return (
     <form
-      className='rounded-xl border p-6'
+      className='p-6 border rounded-xl'
       style={{ borderColor: COLORS.INFO_BOX }}
     >
       <h3 className='mb-6 text-xl font-semibold'>예약자 정보</h3>
@@ -33,7 +33,7 @@ export default function BookerInfoForm({
           value={formData.lastName}
           onChange={onInputChange}
           placeholder='성을 입력해주세요.'
-          className='h-12 rounded-xl border px-4 text-base'
+          className='h-12 px-4 text-base border rounded-xl'
           style={{
             borderColor: COLORS.INPUT_BOX,
             color: COLORS.TEXT_PRIMARY,
@@ -54,7 +54,7 @@ export default function BookerInfoForm({
           value={formData.firstName}
           onChange={onInputChange}
           placeholder='이름을 입력해주세요.'
-          className='h-12 rounded-xl border px-4 text-base'
+          className='h-12 px-4 text-base border rounded-xl'
           style={{
             borderColor: COLORS.INPUT_BOX,
             color: COLORS.TEXT_PRIMARY,
@@ -70,7 +70,7 @@ export default function BookerInfoForm({
           전화번호 <span style={{ color: COLORS.REQUIRED }}>*</span>
         </label>
         <div
-          className='flex h-12 items-center gap-2 rounded-xl border px-4'
+          className='flex items-center h-12 gap-2 px-4 border rounded-xl'
           style={{ borderColor: COLORS.INPUT_BOX }}
         >
           <span className='text-base' style={{ color: COLORS.TEXT_SUB }}>
@@ -107,7 +107,7 @@ export default function BookerInfoForm({
           value={formData.email}
           onChange={onInputChange}
           placeholder='groom@example.com'
-          className='h-12 rounded-xl border px-4 text-base'
+          className='h-12 px-4 text-base border rounded-xl'
           style={{
             borderColor: COLORS.INPUT_BOX,
             color: COLORS.TEXT_PRIMARY,

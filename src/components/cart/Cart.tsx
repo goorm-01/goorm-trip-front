@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 
-import CartItem from './CartItem';
+import CartItems from './CartItem';
 import { useGetCartItems, useDeleteCartItem } from '../../hooks/api/useCartApi';
 import { COLORS } from '../../styles/Colors';
-
+import type { CartItem } from '../../types/product';
 
 interface CartProps {
+  items: CartItem[];
   isOpen: boolean;
   onClose: () => void;
 }
@@ -16,14 +17,20 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   const { mutate: deleteItem } = useDeleteCartItem();
 
   const items = data?.data ?? [];
-  const totalPrice = items.reduce((sum, item) => sum + item.total_price, 0);
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = items.reduce(
+    (sum: number, item: CartItem) => sum + item.total_price,
+    0,
+  );
+  const totalItems = items.reduce(
+    (sum: number, item: CartItem) => sum + item.quantity,
+    0,
+  );
 
   return (
     <>
       {isOpen && (
         <div
-          className='fixed inset-0 bg-black/30 z-40'
+          className='fixed inset-0 z-40 bg-black/30'
           onClick={onClose}
           data-testid='cart-overlay'
         />
@@ -53,28 +60,28 @@ export default function Cart({ isOpen, onClose }: CartProps) {
         </div>
 
         {/* 바디 */}
-        <div className='flex-1 overflow-y-auto px-4'>
+        <div className='flex-1 px-4 overflow-y-auto'>
           {isLoading ? (
-            <p className='text-center mt-10' style={{ color: COLORS.TEXT_SUB }}>
+            <p className='mt-10 text-center' style={{ color: COLORS.TEXT_SUB }}>
               불러오는 중...
             </p>
           ) : items.length === 0 ? (
-            <p className='text-center mt-10' style={{ color: COLORS.TEXT_SUB }}>
+            <p className='mt-10 text-center' style={{ color: COLORS.TEXT_SUB }}>
               장바구니가 비어있습니다
             </p>
           ) : (
-            items.map((item) => (
-              <CartItem
+            items.map((item: CartItem) => (
+              <CartItems
                 key={item.cart_id}
                 item={item}
-                onRemove={(cartId) => deleteItem(cartId)}
+                onRemove={(cartId: number) => deleteItem(cartId)}
               />
             ))
           )}
         </div>
 
         {/* 푸터 */}
-        <div className='border-t p-4' style={{ borderColor: COLORS.INFO_BOX }}>
+        <div className='p-4 border-t' style={{ borderColor: COLORS.INFO_BOX }}>
           <div className='flex items-center justify-between mb-3'>
             <span className='text-sm' style={{ color: COLORS.TEXT_SUB }}>
               {totalItems}건의 여행 상품
@@ -93,7 +100,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
               onClose();
               navigate('/payment');
             }}
-            className='w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium'
+            className='w-full py-3 font-medium text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600'
           >
             결제하기
           </button>

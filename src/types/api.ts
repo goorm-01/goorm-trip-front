@@ -6,15 +6,6 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
-// 상품 타입
-export interface Product {
-  product_id: number;
-  product_name: string;
-  category: string;
-  price: number;
-  image: string;
-}
-
 export interface ProductDetail {
   product_id: number;
   product_name: string;

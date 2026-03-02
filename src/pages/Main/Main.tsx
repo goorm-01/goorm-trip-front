@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -97,9 +96,9 @@ export default function Main() {
         </div>
       </header>
 
-      <main className='max-w-7xl mx-auto px-4 py-8'>
+      <main className='px-4 py-8 mx-auto max-w-7xl'>
         {isLoading ? (
-          <p className='text-center py-20' style={{ color: COLORS.TEXT_SUB }}>
+          <p className='py-20 text-center' style={{ color: COLORS.TEXT_SUB }}>
             상품을 불러오는 중...
           </p>
         ) : (

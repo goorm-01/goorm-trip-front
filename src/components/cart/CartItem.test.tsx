@@ -1,10 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
 import CartItem from './CartItem';
 import type { CartItem as CartItemType } from '../../types/api';
 
 const SAMPLE_ITEM: CartItemType = {
   cart_id: 1,
+  product_id: 101,
   product_name: '제주도 3박 4일 여행',
   price: 890000,
   quantity: 2,

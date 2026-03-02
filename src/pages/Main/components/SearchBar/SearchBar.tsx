@@ -1,5 +1,6 @@
-import { COLORS } from '../../../../styles/Colors';
 import { useState } from 'react';
+
+import { COLORS } from '../../../../styles/Colors';
 
 interface SearchBarProps {
   value: string;
@@ -12,7 +13,7 @@ export default function SearchBar({ value, onSearch }: SearchBarProps) {
   return (
     <div className='relative w-full'>
       <svg
-        className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400'
+        className='absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2'
         fill='none'
         stroke='currentColor'
         viewBox='0 0 24 24'

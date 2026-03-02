@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+
 import ProductList from './ProductList';
 import type { Product } from '../../../../types/product';
 

@@ -8,13 +8,14 @@ export interface Product {
 
 export interface CartItem {
   cart_id: number;
+  product_id: number;
   product_name: string;
   price: number;
   quantity: number;
   total_price: number;
   image: string;
   category: string;
-  departure_date?: string;
+  departure_date: string;
 }
 
 export interface CartAddRequest {

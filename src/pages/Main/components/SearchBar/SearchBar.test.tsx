@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
 import SearchBar from './SearchBar';
 
 test('검색어 입력창 렌더링', () => {

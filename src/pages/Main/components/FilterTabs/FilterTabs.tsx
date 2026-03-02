@@ -22,7 +22,7 @@ interface FilterTabsProps {
 
 export default function FilterTabs({ selected, onSelect }: FilterTabsProps) {
   return (
-    <div className='flex gap-2 overflow-x-auto py-2'>
+    <div className='flex gap-2 py-2 overflow-x-auto'>
       {FILTER_CATEGORIES.map((cat) => (
         <button
           key={cat}
