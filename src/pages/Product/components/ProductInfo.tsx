@@ -43,7 +43,6 @@ export default function ProductInfo({
         {
           onSuccess: (data) => {
             console.log('장바구니 추가 성공:', data);
-            // 장바구니 추가 성공 시 상품 페이지 닫기
             if (onClose) {
               onClose();
             }
@@ -55,12 +54,12 @@ export default function ProductInfo({
         },
       );
     } else if (pendingItem.type === 'reserve') {
+      // 기존 utils의 toPaymentItem 함수가 처리할 수 있는 형식으로 데이터 전달
       navigate('/payment', {
         state: {
           previewItems: [
             {
-              id: product_id,
-              product_id,
+              product_id: product_id,
               product_name: pendingItem.product.product_name,
               price: pendingItem.product.price,
               quantity: pendingItem.quantity,
