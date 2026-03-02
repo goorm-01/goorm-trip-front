@@ -34,7 +34,7 @@ describe('ProductCard', () => {
       />,
     );
     const img = screen.getByRole('img');
-    expect(img).toHaveAttribute('src', SAMPLE_PRODUCT.images);
+    expect(img).toHaveAttribute('src', SAMPLE_PRODUCT.image);
     expect(img).toHaveAttribute('alt', SAMPLE_PRODUCT.product_name);
   });
 
