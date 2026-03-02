@@ -1,5 +1,6 @@
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
 import { API_BASE_URL } from '../../config/api';
 
 // 전체 상품 조회

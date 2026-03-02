@@ -41,7 +41,7 @@ export default function ProductCard({
           style={{ backgroundColor: COLORS.DESCRIPTION_BG }}
         >
           <img
-            src={product.image}
+            src={product.images?.[0]}
             alt={product.product_name}
             className='object-cover w-full h-full'
           />

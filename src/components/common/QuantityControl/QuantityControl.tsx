@@ -24,7 +24,7 @@ export default function QuantityControl({
         -
       </button>
       <span
-        className='w-5 text-center text-sm cursor-default'
+        className='w-5 text-sm text-center cursor-default'
         data-testid='quantity-value'
       >
         {quantity}

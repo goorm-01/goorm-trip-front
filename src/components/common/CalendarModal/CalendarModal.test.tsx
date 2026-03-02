@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
 import CalendarModal from './CalendarModal';
 
 const TODAY = new Date().toISOString().split('T')[0];

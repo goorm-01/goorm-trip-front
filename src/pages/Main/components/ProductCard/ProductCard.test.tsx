@@ -10,7 +10,7 @@ const SAMPLE_PRODUCT: Product = {
   product_name: '제주도 3박 4일 여행',
   category: '자연관광',
   price: 890000,
-  image: 'https://placehold.co/400x300?text=제주3박4일',
+  images: ['https://placehold.co/400x300?text=제주3박4일'],
 };
 
 describe('ProductCard', () => {
@@ -34,7 +34,7 @@ describe('ProductCard', () => {
       />,
     );
     const img = screen.getByRole('img');
-    expect(img).toHaveAttribute('src', SAMPLE_PRODUCT.image);
+    expect(img).toHaveAttribute('src', SAMPLE_PRODUCT.images);
     expect(img).toHaveAttribute('alt', SAMPLE_PRODUCT.product_name);
   });
 

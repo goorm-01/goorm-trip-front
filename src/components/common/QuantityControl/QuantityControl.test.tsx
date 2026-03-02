@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
 import QuantityControl from './QuantityControl';
 
 test('현재 수량이 렌더링된다', () => {
