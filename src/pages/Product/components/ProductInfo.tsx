@@ -1,18 +1,25 @@
 import { useState } from 'react';
-import { COLORS } from '../../../styles/Colors';
-import type { ProductDetail } from '../../../types/api';
-import { useCreateOrderPreview } from '../../../hooks/api/useOrderApi';
-import { useAddToCart } from '../../../hooks/api/useCartApi';
-import QuantityControl from '../../../components/common/QuantityControl/QuantityControl';
+import { useNavigate } from 'react-router-dom';
+
 import ReservationButton from './ReservationButton';
 import CalendarModal from '../../../components/common/CalendarModal/CalendarModal';
+import QuantityControl from '../../../components/common/QuantityControl/QuantityControl';
+import { useAddToCart } from '../../../hooks/api/useCartApi';
+import { COLORS } from '../../../styles/Colors';
+import type { ProductDetail } from '../../../types/api';
 
 interface ProductInfoProps {
   product: ProductDetail;
   product_id: number;
+  onClose?: () => void;
 }
 
-export default function ProductInfo({ product, product_id }: ProductInfoProps) {
+export default function ProductInfo({
+  product,
+  product_id,
+  onClose,
+}: ProductInfoProps) {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [pendingItem, setPendingItem] = useState<{
@@ -22,7 +29,6 @@ export default function ProductInfo({ product, product_id }: ProductInfoProps) {
   } | null>(null);
 
   const addToCartMutation = useAddToCart();
-  const createOrderMutation = useCreateOrderPreview();
 
   const handleDateConfirm = (date: string) => {
     if (!pendingItem) return;
@@ -37,34 +43,32 @@ export default function ProductInfo({ product, product_id }: ProductInfoProps) {
         {
           onSuccess: (data) => {
             console.log('장바구니 추가 성공:', data);
-            // 장바구니 페이지(모달) 열기
+            if (onClose) {
+              onClose();
+            }
           },
           onError: (error) => {
             console.error('장바구니 추가 실패:', error);
+            alert('장바구니 추가에 실패했습니다. 다시 시도해주세요.');
           },
         },
       );
     } else if (pendingItem.type === 'reserve') {
-      createOrderMutation.mutate(
-        {
-          products: [
+      // 기존 utils의 toPaymentItem 함수가 처리할 수 있는 형식으로 데이터 전달
+      navigate('/payment', {
+        state: {
+          previewItems: [
             {
               product_id: product_id,
+              product_name: pendingItem.product.product_name,
+              price: pendingItem.product.price,
               quantity: pendingItem.quantity,
               departure_date: date,
+              image: pendingItem.product.images?.[0] ?? '',
             },
           ],
         },
-        {
-          onSuccess: (data) => {
-            console.log('주문 생성 성공:', data);
-            // 결제 페이지로 이동
-          },
-          onError: (error) => {
-            console.error('주문 생성 실패:', error);
-          },
-        },
-      );
+      });
     }
 
     setDateModalOpen(false);
@@ -139,6 +143,7 @@ export default function ProductInfo({ product, product_id }: ProductInfoProps) {
           />
         </div>
       </div>
+
       <CalendarModal
         isOpen={dateModalOpen}
         onConfirm={handleDateConfirm}
