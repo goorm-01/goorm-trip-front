@@ -1,12 +1,14 @@
-import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+
 import { API_BASE_URL, COMMON_HEADERS } from '../../config/api';
 import type { CartRequest } from '../../types/api';
 
 // 장바구니 목록 조회
-export const useGetCartItems = () => {
+export const useGetCartItems = (enabled = true) => {
   return useQuery({
     queryKey: ['cart', 'items'],
+    enabled,
     queryFn: async () => {
       const response = await axios.get(`${API_BASE_URL}/api/v1/carts`, {
         headers: { 'X-User-Id': '1' },

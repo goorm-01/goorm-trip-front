@@ -1,8 +1,8 @@
 import { COLORS } from '../../../styles/Colors';
-import type { BookingItem } from '../../../types/payment';
+import type { PaymentItem } from '../../../types/payment';
 
 interface BookingItemsSectionProps {
-  items: BookingItem[];
+  items: PaymentItem[];
   selectedItems: Record<number, boolean>;
   quantities: Record<number, number>;
   onToggleItem: (itemId: number) => void;
@@ -27,12 +27,31 @@ export default function BookingItemsSection({
         {items.map((item) => (
           <article
             key={item.id}
-            className='w-[360px] shrink-0 rounded-xl border p-4 shadow-sm'
+            className='relative w-[360px] shrink-0 rounded-xl border p-4 shadow-sm'
             style={{
               backgroundColor: COLORS.BG_PRIMARY,
               borderColor: COLORS.INFO_BOX,
             }}
           >
+            <div
+              className='absolute right-4 top-4 z-10 h-[18px] w-[18px] rounded-sm border'
+              style={{
+                backgroundColor: selectedItems[item.id]
+                  ? COLORS.CHECKBOX
+                  : COLORS.BG_PRIMARY,
+                borderColor: selectedItems[item.id]
+                  ? COLORS.CHECKBOX
+                  : COLORS.INFO_BOX,
+              }}
+            >
+              <input
+                type='checkbox'
+                checked={selectedItems[item.id] ?? false}
+                onChange={() => onToggleItem(item.id)}
+                className='absolute -left-[3px] -top-[3px] h-6 w-6'
+              />
+            </div>
+
             <div className='flex gap-4'>
               <div
                 className='h-[120px] w-[120px] shrink-0 overflow-hidden rounded-lg'
@@ -45,35 +64,17 @@ export default function BookingItemsSection({
                 />
               </div>
               <div className='flex min-w-0 flex-1 flex-col justify-between'>
-                <div className='flex items-start justify-between gap-3'>
+                <div className='flex items-start gap-3 pr-7'>
                   <div>
-                    <h3 className='truncate text-[15px] font-bold'>
+                    <h3 className='break-words whitespace-normal text-[15px] font-bold leading-[1.35]'>
                       {item.title}
                     </h3>
                     <time
                       className='text-xs'
                       style={{ color: COLORS.TEXT_SUB }}
                     >
-                      {item.date}
+                      {formatDateForDisplay(item.departureDate)}
                     </time>
-                  </div>
-                  <div
-                    className='relative mt-1 h-[18px] w-[18px] rounded-sm border'
-                    style={{
-                      backgroundColor: selectedItems[item.id]
-                        ? COLORS.CHECKBOX
-                        : COLORS.BG_PRIMARY,
-                      borderColor: selectedItems[item.id]
-                        ? COLORS.CHECKBOX
-                        : COLORS.INFO_BOX,
-                    }}
-                  >
-                    <input
-                      type='checkbox'
-                      checked={selectedItems[item.id] ?? false}
-                      onChange={() => onToggleItem(item.id)}
-                      className='absolute -left-[3px] -top-[3px] h-6 w-6'
-                    />
                   </div>
                 </div>
 
@@ -82,7 +83,7 @@ export default function BookingItemsSection({
                     className='text-base font-bold'
                     style={{ color: COLORS.BUTTON_MAIN }}
                   >
-                    {item.price}
+                    {formatPrice(item.unitPrice)}
                   </div>
                   <div className='flex items-center'>
                     <button
@@ -118,4 +119,20 @@ export default function BookingItemsSection({
       </div>
     </section>
   );
+}
+
+function formatDateForDisplay(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  const yy = String(date.getFullYear()).slice(2);
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yy}.${mm}.${dd}`;
+}
+
+function formatPrice(price: number): string {
+  return `₩ ${price.toLocaleString('ko-KR')}`;
 }

@@ -1,17 +1,17 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchBar from './components/SearchBar/SearchBar';
+
 import FilterTabs from './components/FilterTabs/FilterTabs';
 import type { FilterCategory } from './components/FilterTabs/FilterTabs';
-import ProductList from './components/ProductList/ProductList';
 import PopularProducts from './components/PopularProducts/PopularProducts';
-import { COLORS } from '../../styles/Colors';
+import ProductList from './components/ProductList/ProductList';
+import SearchBar from './components/SearchBar/SearchBar';
 import CalendarModal from '../../components/common/CalendarModal/CalendarModal';
-import type { Product } from '../../types/product';
-import { useGetAllProducts } from '../../hooks/api/useProductApi';
 import { useAddToCart } from '../../hooks/api/useCartApi';
-import { useCreateOrderPreview } from '../../hooks/api/useOrderApi';
+import { useGetAllProducts } from '../../hooks/api/useProductApi';
+import { COLORS } from '../../styles/Colors';
+import type { Product } from '../../types/product';
 
 export default function Main() {
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ export default function Main() {
   const products: Product[] = data?.data ?? [];
 
   const { mutate: addToCart } = useAddToCart();
-  const { mutate: createOrderPreview } = useCreateOrderPreview();
 
   const handleAddToCart = (product: Product, quantity: number) => {
     setPendingItem({ product, quantity, type: 'cart' });
@@ -56,22 +55,21 @@ export default function Main() {
         },
       );
     } else {
-      createOrderPreview(
-        {
-          products: [
+      navigate('/payment', {
+        state: {
+          previewItems: [
             {
+              id: pendingItem.product.product_id,
               product_id: pendingItem.product.product_id,
+              product_name: pendingItem.product.product_name,
+              price: pendingItem.product.price,
               quantity: pendingItem.quantity,
               departure_date: date,
+              image: pendingItem.product.image,
             },
           ],
         },
-        {
-          onSuccess: (responseData) => {
-            navigate('/payment', { state: { orderData: responseData.data } });
-          },
-        },
-      );
+      });
     }
 
     setDateModalOpen(false);

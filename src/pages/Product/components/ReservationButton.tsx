@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { COLORS } from '../../../styles/Colors';
 import { AiOutlineShopping } from 'react-icons/ai';
+
+import { COLORS } from '../../../styles/Colors';
 import type { ProductDetail } from '../../../types/api';
 
 interface ReservationButtonProps {
