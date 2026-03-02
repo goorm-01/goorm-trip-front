@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 
 import Cart from './components/cart/Cart';
 import CartFloatingButton from './components/cart/CartFloatingButton';
+import ScrollToTop from './components/common/ScrollToTop';
 import useKakaoLoader from './hooks/useKakaoLoader';
 import Main from './pages/Main/Main';
 import Payment from './pages/Payment/Payment';
@@ -22,6 +23,7 @@ export default function App() {
         color: COLORS.TEXT_PRIMARY,
       }}
     >
+      <ScrollToTop />
       <Routes>
         <Route path='/' element={<Main />} />
         <Route
