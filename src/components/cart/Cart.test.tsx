@@ -15,6 +15,7 @@ vi.mock('react-router-dom', () => ({
 const SAMPLE_ITEMS: CartItem[] = [
   {
     cart_id: 1,
+    product_id: 101,
     product_name: '제주도 3박 4일 여행',
     price: 890000,
     quantity: 2,
@@ -25,6 +26,7 @@ const SAMPLE_ITEMS: CartItem[] = [
   },
   {
     cart_id: 2,
+    product_id: 102,
     product_name: '부산 당일치기',
     price: 230000,
     quantity: 1,

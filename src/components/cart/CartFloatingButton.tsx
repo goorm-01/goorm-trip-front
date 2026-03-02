@@ -1,7 +1,10 @@
-import { useGetCartItems } from '../../hooks/api/useCartApi';
 import { AiOutlineShopping } from 'react-icons/ai';
 
+import { useGetCartItems } from '../../hooks/api/useCartApi';
+import type { CartItem } from '../../types/product';
+
 interface CartFloatingButtonProps {
+  items: CartItem[];
   onClick: () => void;
 }
 
@@ -10,16 +13,18 @@ export default function CartFloatingButton({
 }: CartFloatingButtonProps) {
   const { data } = useGetCartItems();
   const items = data?.data ?? [];
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = items.reduce(
+    (sum: number, item: CartItem) => sum + item.quantity,
+    0,
+  );
 
   return (
-    <div className='fixed bottom-6 right-6 z-30'>
+    <div className='fixed z-30 bottom-6 right-6'>
       <button
         type='button'
         aria-label='장바구니 열기'
         onClick={onClick}
-        className='relative w-14 h-14 bg-blue-500 hover:bg-blue-600 text-white        
-rounded-full shadow-lg transition-colors flex items-center justify-center'
+        className='relative flex items-center justify-center text-white transition-colors bg-blue-500 rounded-full shadow-lg w-14 h-14 hover:bg-blue-600'
       >
         {/* 장바구니 아이콘 */}
         <AiOutlineShopping style={{ width: '24px', height: '24px' }} />
@@ -28,8 +33,7 @@ rounded-full shadow-lg transition-colors flex items-center justify-center'
         {totalItems > 0 && (
           <span
             data-testid='cart-badge'
-            className='absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs 
-font-bold rounded-full flex items-center justify-center'
+            className='absolute flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full -top-1 -right-1'
           >
             {totalItems}
           </span>

@@ -1,5 +1,5 @@
-import type { CartItem as CartItemType } from '../../types/api';
 import { COLORS } from '../../styles/Colors';
+import type { CartItem as CartItemType } from '../../types/api';
 
 interface CartItemProps {
   item: CartItemType;
@@ -13,17 +13,17 @@ export default function CartItem({ item, onRemove }: CartItemProps) {
       style={{ borderColor: COLORS.INFO_BOX }}
     >
       {/* 이미지 */}
-      <div className='w-20 h-20 shrink-0 rounded-lg overflow-hidden'>
+      <div className='w-20 h-20 overflow-hidden rounded-lg shrink-0'>
         <img
           src={item.image}
           alt={item.product_name}
-          className='w-full h-full object-cover'
+          className='object-cover w-full h-full'
         />
       </div>
 
       {/* 정보 */}
-      <div className='flex-1 flex flex-col gap-1'>
-        <p className='font-semibold text-sm line-clamp-1'>
+      <div className='flex flex-col flex-1 gap-1'>
+        <p className='text-sm font-semibold line-clamp-1'>
           {item.product_name}
         </p>
         <p className='text-xs' style={{ color: COLORS.TEXT_SUB }}>
@@ -50,7 +50,7 @@ export default function CartItem({ item, onRemove }: CartItemProps) {
         type='button'
         aria-label='삭제'
         onClick={() => onRemove(item.cart_id)}
-        className='text-gray-400 hover:text-red-500 transition-colors text-lg leading-none'
+        className='text-lg leading-none text-gray-400 transition-colors hover:text-red-500'
       >
         ×
       </button>

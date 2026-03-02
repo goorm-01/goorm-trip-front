@@ -24,13 +24,31 @@ export default function App() {
     >
       <Routes>
         <Route path='/' element={<Main />} />
-        <Route path='/product/:productId' element={<Product />} />
+        <Route
+          path='/product/:productId'
+          element={
+            <Product
+              productId={null}
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
         <Route path='/payment' element={<Payment />} />
       </Routes>
       {shouldShowCart ? (
         <>
-          <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-          <CartFloatingButton onClick={() => setCartOpen((prev) => !prev)} />
+          <Cart
+            isOpen={cartOpen}
+            onClose={() => setCartOpen(false)}
+            items={[]}
+          />
+          <CartFloatingButton
+            onClick={() => setCartOpen((prev) => !prev)}
+            items={[]}
+          />
         </>
       ) : null}
     </div>
